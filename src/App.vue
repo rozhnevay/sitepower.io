@@ -1,36 +1,37 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
     <div>
-      <router-link :to="{ name: 'Dashboard'}">Dashboard</router-link>
-      <router-link :to="{ name: 'Login'}">Login</router-link>
-      <a href="#" v-on:click="logout">Logout</a>
+      <header-component></header-component>
+      <home-component></home-component>
+      <login-modal-component></login-modal-component>
+      <registration-modal-component></registration-modal-component>
     </div>
     <router-view/>
   </div>
 </template>
 
 <script>
+import Header from './components/Header';
+import LoginModal from './components/Login';
+import RegistrationModal from './components/Registration';
+import Home from './components/Home';
+
+/*
+import pricing from 'components/pricing/pricing';
+import download from 'components/download/download';
+import contact from 'components/contact/contact';
+import pageFooter from 'components/pageFooter/page-footer';
+*/
 export default {
   name: 'App',
-  logout: function (e) {
-    axios
-      .get("/api/logout")
-      .then(() => {
-        router.push("/")
-      })
+  components: {
+    'header-component': Header,
+    'login-modal-component': LoginModal,
+    'registration-modal-component': RegistrationModal,
+    'home-component': Home
   }
-
 }
 </script>
 
-<style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+<style lang="scss" src="./global-style.scss">
 </style>
