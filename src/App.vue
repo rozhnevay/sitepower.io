@@ -16,6 +16,8 @@ import LoginModal from './components/Login';
 import RegistrationModal from './components/Registration';
 import Home from './components/Home';
 
+
+
 /*
 import pricing from 'components/pricing/pricing';
 import download from 'components/download/download';

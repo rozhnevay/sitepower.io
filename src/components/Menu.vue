@@ -66,8 +66,11 @@
         axios.get("/api/logout").then((res) => {
           this.$store.commit('isUserLoggedIn', false);
           this.$store.commit('isUserSignedUp', false);
+          this.$store.commit('logout', true);
           this.$router.push({ name: 'homepage-component' });
-        })
+
+        });
+
       },
       showLoginModal () {
         this.$store.commit('showLoginModal', true);

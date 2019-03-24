@@ -1,30 +1,45 @@
 <template>
 <section id="home">
-  <div class="overlay">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-1"></div>
-        <div class="col-md-10 wow fadeIn" data-wow-delay="0.3s">
-          <h1 class="text-upper">Software Landing Page</h1>
-          <p class="tm-white">Boxer is a fully Responsive, Clean Design, Modern, and Flexible Software Landing Page for startups, businesses
-            and agencies. It is built with HTML5 &amp; CSS3, Bootstrap 3.3.4, Font Awesome 4.3.0, and much more. Designed
-            by
-            <a rel="nofollow" href="http://www.facebook.com/templatemo" target="_parent">templatemo</a>. Images by
-            <a rel="nofollow" href="http://pixabay.com" target="_blank">Pixabay</a>
-          </p>
-          <img src="../assets/software-img.png" class="img-responsive" alt="home img">
-        </div>
-        <div class="col-md-1"></div>
-      </div>
-    </div>
-  </div>
+      <ul id="messages"></ul>
+      <form action="">
+        <input id="m" autocomplete="off" v-model="msg" /><button v-on:click="submitForm">Send</button>
+      </form>
 </section>
   </template>
 
 <script>
-  import Vue from 'vue';
+import Vue from 'vue';
 
 export default Vue.extend({
-  name: "home-component"
+  name: "home-component",
+  data () {
+    return {
+      msg: ''
+    }
+  },
+  sockets: {
+    receive: function (data) {
+      console.log('this method was fired by the socket server. eg: io.emit("customEmit", data)')
+    },
+    connected: function (data) {
+      localStorage.setItem("sitepower.io.ClientId", data);
+    }
+  },
+  methods: {
+    submitForm() {
+      this.$socket.emit("send", this.msg);
+      this.msg = "";
+    }
+  }
 });
 </script>
+<style >
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font: 13px Helvetica, Arial; }
+  form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+  form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; color: black; }
+  form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+  #messages { list-style-type: none; margin: 0; padding: 0; }
+  #messages li { padding: 5px 10px; }
+  #messages li:nth-child(odd) { background: #eee; }
+</style>
