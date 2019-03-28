@@ -6,11 +6,12 @@ import router from './router/index.js'
 import store from './store';
 import VueSocketIO from 'vue-socket.io'
 
+
 Vue.config.productionTip = false
 
 Vue.use(new VueSocketIO({
   debug: true,
-  connection: 'http://localhost:3000',
+  connection: 'http://localhost:3000?token=main',
   clientId: localStorage.getItem("sitepower.io.ClientId"),
   vuex: {
     store,

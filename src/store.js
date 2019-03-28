@@ -12,10 +12,11 @@ export default new Vuex.Store({
     },
     systemInfo: {
       openLoginModal: false,
-      openSignupModal: false
+      openSignupModal: false,
+      openResetModal: false
     }
   },
-  
+
   getters: {
     isUserLoggedIn: state => {
       return state.userInfo.isLoggedIn;
@@ -31,12 +32,16 @@ export default new Vuex.Store({
     },
     isSignupModalOpen: state => {
       return state.systemInfo.openSignupModal;
+    },
+    isResetModalOpen: state => {
+      return state.systemInfo.openResetModal;
     }
   },
   mutations: {
     isUserLoggedIn: (state, isUserLoggedIn) => {
       state.userInfo.isLoggedIn = isUserLoggedIn;
     },
+
     isUserSignedUp: (state, isSignedUp) => {
       state.userInfo.isSignedUp = isSignedUp;
     },
@@ -46,11 +51,15 @@ export default new Vuex.Store({
     showSignupModal: (state, show) => {
       state.systemInfo.openSignupModal = show;
     },
+    showResetModal: (state, show) => {
+      state.systemInfo.openResetModal = show;
+      if (show) state.systemInfo.openLoginModal = !show;
+    },
     setUserName: (state, name) => {
       state.userInfo.name = name;
     },
   },
-  
+
   actions: {
 
   }

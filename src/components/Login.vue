@@ -62,6 +62,7 @@
         <footer class="modal-card-foot">
           <button v-if="!isUserLoggedIn" type="submit" class="button is-info">{{ primaryBtnLabel }}</button>
           <button v-if="isUserLoggedIn" type="button" class="button is-info" @click="closeModal">{{ btnLoggedInLabel }}</button>
+          <span class="btn btn-link" @click="showResetModal">{{ resetLabel }}</span>
         </footer>
       </form>
     </div>
@@ -90,7 +91,8 @@
         highlightEmailWithError: null,
         highlightPasswordWithError: null,
         isFormSuccess: false,
-        loginError : ''
+        loginError : '',
+        resetLabel : 'Forgot passsword?'
       };
     },
 
@@ -110,6 +112,9 @@
     methods: {
       closeModal () {
         this.$store.commit('showLoginModal', false);
+      },
+      showResetModal () {
+        this.$store.commit('showResetModal', true);
       },
       login: (email, password) => {
         let data = {

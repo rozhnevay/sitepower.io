@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="navbar-item">
+    <div v-if="isDataLoaded" class="navbar-item">
       <div class="field is-grouped">
         <p class="control">
           <a v-if="!isUserLoggedIn" class="button" @click="showSignupModal">
@@ -42,22 +42,29 @@
       return {
         logoutLabel: 'Log out',
         loginLabel: 'Log in',
-        signupLabel: 'Sign up'
+        signupLabel: 'Sign up',
+        isDataLoaded: false
       }
     },
+    beforeMount() {
+        axios.get("/api/user").then((res) => {
+          console.log(res);
+          this.$store.commit('isUserLoggedIn', true);
+          this.$store.commit('setUserName', res.data.user.name);
+          this.isDataLoaded = true;
+        }).catch((err) => {
+          this.$store.commit('isUserLoggedIn', false);
+          this.$store.commit('setUserName', "");
+          this.isDataLoaded = true;
+        })
 
+    },
     computed: {
       isUserLoggedIn () {
         return this.$store.getters.isUserLoggedIn;
       },
       getUserName () {
-        let name = this.$store.getters.getUserName;
-
-        if (name === '') {
-          return 'user';
-        } else {
-          return name;
-        }
+        return this.$store.getters.getUserName;
       }
     },
 

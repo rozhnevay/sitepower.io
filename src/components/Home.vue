@@ -1,11 +1,13 @@
 <template>
-<section id="home">
-      <ul id="messages"></ul>
-      <form action="">
-        <input id="m" autocomplete="off" v-model="msg" /><button v-on:click="submitForm">Send</button>
-      </form>
-</section>
-  </template>
+  <section id="chat">
+        <ul id="messages">
+          <li v-for="msg in messages" class="message" v-bind:class="msg.type"><span class="message-time">{{msg.time}}</span>{{msg.body}}</li>
+        </ul>
+        <form action="">
+          <input id="m" autocomplete="off" v-model="msg" /><button v-on:click="submitForm">Send</button>
+        </form>
+  </section>
+ </template>
 
 <script>
 import Vue from 'vue';
@@ -14,12 +16,12 @@ export default Vue.extend({
   name: "home-component",
   data () {
     return {
-      msg: ''
+      messages: []
     }
   },
   sockets: {
     receive: function (data) {
-      console.log('this method was fired by the socket server. eg: io.emit("customEmit", data)')
+      this.messages.push({type:"received", body:data, time:Date.now()});
     },
     connected: function (data) {
       localStorage.setItem("sitepower.io.ClientId", data);
@@ -28,6 +30,7 @@ export default Vue.extend({
   methods: {
     submitForm() {
       this.$socket.emit("send", this.msg);
+      this.messages.push({type:"sended", body:this.msg, time:Date.now()});
       this.msg = "";
     }
   }
@@ -42,4 +45,32 @@ export default Vue.extend({
   #messages { list-style-type: none; margin: 0; padding: 0; }
   #messages li { padding: 5px 10px; }
   #messages li:nth-child(odd) { background: #eee; }
+
+  .message.sended {
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-right: 10px;
+    border-radius: 25px;
+    background-color: #78e08f;
+    padding: 10px;
+    position: relative;
+    display: block;
+  }
+  .message.received {
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-left: 10px;
+    border-radius: 25px;
+    background-color: #82ccdd;
+    padding: 10px;
+    position: relative;
+    display: block;
+  }
+  .message-time {
+    position: absolute;
+    left: 0;
+    bottom: -15px;
+    color: rgba(255,255,255,0.5);
+    font-size: 10px;
+  }
 </style>

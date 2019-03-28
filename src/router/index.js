@@ -2,7 +2,7 @@
 
 import Vue from "vue"
 import Router from "vue-router"
-import Homepage from '../components/Home';
+import App from '../App';
 import '@fortawesome/fontawesome-free/css/all.css';
 import 'bulma';
 import 'babel-polyfill';
@@ -12,8 +12,8 @@ export default new Router({
   routes: [
     {
       path: "/",
-      name: 'home-component',
-      component: Homepage
+      name: 'App',
+      component: App
     }
   ]
 })
