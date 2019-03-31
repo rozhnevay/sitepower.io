@@ -47,7 +47,7 @@
 </template>
 
 <script>
-  import { isValidEmail } from '../validators';
+  import { isValidEmail } from '../../validators';
   import axios from "axios";
 
   export default {

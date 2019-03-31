@@ -70,7 +70,7 @@
 </template>
 
 <script>
-  import { isValidEmail } from '../validators';
+  import { isValidEmail } from '../../validators';
   import axios from "axios";
 
   export default {
@@ -134,9 +134,8 @@
             this.isFormSuccess = true;
             this.$store.commit('isUserLoggedIn', this.isFormSuccess);
             this.loginError = "";
-            console.log(res);
-            this.$store.commit('isUserLoggedIn', this.isFormSuccess);
             this.$store.commit('setUserName', res.data.name);
+            console.log(res);
           }).catch((err)=>{
             this.isFormSuccess = false;
             this.$store.commit('isUserLoggedIn', this.isFormSuccess);

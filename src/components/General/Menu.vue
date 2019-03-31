@@ -43,6 +43,7 @@
         logoutLabel: 'Log out',
         loginLabel: 'Log in',
         signupLabel: 'Sign up',
+        privateLabel: 'My Account',
         isDataLoaded: false
       }
     },
@@ -51,6 +52,7 @@
           console.log(res);
           this.$store.commit('isUserLoggedIn', true);
           this.$store.commit('setUserName', res.data.user.name);
+          this.$store.commit('privateOpen', 'Chat');
           this.isDataLoaded = true;
         }).catch((err) => {
           this.$store.commit('isUserLoggedIn', false);
@@ -74,6 +76,7 @@
           this.$store.commit('isUserLoggedIn', false);
           this.$store.commit('isUserSignedUp', false);
           this.$store.commit('logout', true);
+          this.$store.commit('privateOpen', 'Chat');
           this.$router.push({ name: 'homepage-component' });
 
         });
@@ -89,3 +92,8 @@
   }
 </script>
 
+<style scoped>
+  .navbar-dropdown {
+    z-index: 9999;
+  }
+</style>

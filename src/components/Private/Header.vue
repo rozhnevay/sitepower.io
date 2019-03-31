@@ -8,21 +8,16 @@
           <span class="icon icon-bar"></span>
         </button>
       </div>
-      <div class="collapse navbar-collapse">
+      <div v-if="isUserLoggedIn" class="collapse navbar-collapse">
         <ul class="nav navbar-nav navbar-right text-uppercase">
-          <li><a href="#home">Home</a></li>
-          <li><a href="#feature">Features</a></li>
-          <li><a href="#pricing">Pricing</a></li>
-          <li><a href="#download">Download</a></li>
-          <li><a href="#contact">Contact</a></li>
+          <li><a @click="chatOpen">My Chats</a></li>
+          <li><a @click="prefOpen">My Preferences</a></li>
         </ul>
       </div>
-      <!-- For mobile and tablet -->
       <div v-show="isMenuOpen" class="navbar-end">
         <menu-component></menu-component>
       </div>
 
-      <!-- For desktop -->
       <div class="navbar-end is-hidden-mobile">
         <menu-component></menu-component>
       </div>
@@ -31,17 +26,30 @@
 </template>
 
 <script>
-    import Menu from './Menu';
-    export default {
-        name: "header-component",
-        data () {
-          return {
-            isMenuOpen: false
-          }
-        },
-      components: {
-        'menu-component': Menu
+  import Menu from '../General/Menu';
+  export default {
+    name: "private-header-component",
+    data () {
+      return {
+        isMenuOpen: false
+      }
+    },
+    methods : {
+      chatOpen () {
+        this.$store.commit('privateOpen', 'Chat');
       },
-    }
+      prefOpen() {
+        this.$store.commit('privateOpen', 'Pref');
+      },
+    },
+    computed: {
+      isUserLoggedIn () {
+        return this.$store.getters.isUserLoggedIn;
+      }
+    },
+    components: {
+      'menu-component': Menu
+    },
+  }
 </script>
 

@@ -9,17 +9,7 @@ import VueSocketIO from 'vue-socket.io'
 
 Vue.config.productionTip = false
 
-Vue.use(new VueSocketIO({
-  debug: true,
-  connection: 'http://localhost:3000?token=main',
-  clientId: localStorage.getItem("sitepower.io.ClientId"),
-  vuex: {
-    store,
-    actionPrefix: 'SOCKET_',
-    mutationPrefix: 'SOCKET_'
-  }
-}))
-console.log("Id: " + localStorage.getItem("sitepower.io.ClientId"));
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

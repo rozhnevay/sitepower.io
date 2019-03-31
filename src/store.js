@@ -13,7 +13,8 @@ export default new Vuex.Store({
     systemInfo: {
       openLoginModal: false,
       openSignupModal: false,
-      openResetModal: false
+      openResetModal: false,
+      privateOpen: 'Chat'
     }
   },
 
@@ -35,6 +36,9 @@ export default new Vuex.Store({
     },
     isResetModalOpen: state => {
       return state.systemInfo.openResetModal;
+    },
+    privateOpen: state => {
+      return state.systemInfo.privateOpen;
     }
   },
   mutations: {
@@ -58,6 +62,9 @@ export default new Vuex.Store({
     setUserName: (state, name) => {
       state.userInfo.name = name;
     },
+    privateOpen: (state, type) => {
+      state.systemInfo.privateOpen = type;
+    }
   },
 
   actions: {

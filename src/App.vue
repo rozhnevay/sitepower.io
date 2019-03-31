@@ -1,21 +1,18 @@
 <template>
   <div id="app">
-    <div>
-      <header-component></header-component>
-      <home-component></home-component>
-      <login-modal-component></login-modal-component>
-      <registration-modal-component></registration-modal-component>
-      <reset-modal-component></reset-modal-component>
+    <div v-if="isUserLoggedIn" >
+      <private-component></private-component>
     </div>
+    <div v-else="isUserLoggedIn" >
+      <public-component></public-component>
+    </div>
+
   </div>
 </template>
 
 <script>
-import Header from './components/Header';
-import LoginModal from './components/Login';
-import RegistrationModal from './components/Registration';
-import ResetModal from './components/PasswordReset';
-import Home from './components/Home';
+import Private from './Private';
+import Public from './Public';
 
 
 
@@ -28,12 +25,14 @@ import pageFooter from 'components/pageFooter/page-footer';
 
 export default {
   name: 'App',
+  computed: {
+    isUserLoggedIn () {
+      return this.$store.getters.isUserLoggedIn;
+    }
+  },
   components: {
-    'header-component': Header,
-    'login-modal-component': LoginModal,
-    'registration-modal-component': RegistrationModal,
-    'reset-modal-component': ResetModal,
-    'home-component': Home
+    'public-component' : Public,
+    'private-component' : Private
   }
 }
 </script>
