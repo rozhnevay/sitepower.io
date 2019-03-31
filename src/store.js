@@ -14,7 +14,11 @@ export default new Vuex.Store({
       openLoginModal: false,
       openSignupModal: false,
       openResetModal: false,
-      privateOpen: 'Chat'
+      privateOpen: 'Chat',
+      chats : [],
+      activeChatId: "",
+      activeChat: {},
+      activeChatMessages: []
     }
   },
 
@@ -40,6 +44,21 @@ export default new Vuex.Store({
     privateOpen: state => {
       return state.systemInfo.privateOpen;
     }
+    ,
+    getChats: state => {
+      return state.systemInfo.chats;
+    }
+    ,
+    getActiveChatId: state => {
+      return state.systemInfo.activeChatId;
+    },
+    getActiveChat: state => {
+      return state.systemInfo.activeChat;
+    }
+    ,
+    getActiveChatMessages: state => {
+      return state.systemInfo.activeChatMessages;
+    }
   },
   mutations: {
     isUserLoggedIn: (state, isUserLoggedIn) => {
@@ -64,7 +83,41 @@ export default new Vuex.Store({
     },
     privateOpen: (state, type) => {
       state.systemInfo.privateOpen = type;
+    },
+    initChats: (state, chats) => {
+      state.systemInfo.chats = chats;
+    },
+    setActiveChatId: (state, id) => {
+      state.systemInfo.activeChatId = id;
+      state.systemInfo.activeChat = state.systemInfo.chats.filter(item => item.sitepower_id == state.systemInfo.activeChatId);
+      if (state.systemInfo.activeChat && state.systemInfo.activeChat[0] && state.systemInfo.activeChat[0].chat) {
+        state.systemInfo.activeChatMessages = state.systemInfo.activeChat[0].chat.messages;
+      } else {
+        state.systemInfo.activeChatMessages = [];
+      }
+    },
+    socket_receive: (state, msg) => {
+      console.log("receive");
+      console.log(msg);
+      let chatObj, chatId;
+      if (msg.direction == "to_user") {
+        chatId = msg.sender_id;
+      } else {
+        chatId = msg.recepient_id;
+      }
+      chatObj = state.systemInfo.chats.filter(item => item.sitepower_id == chatId);
+      let chatItem = chatObj[0];
+      if (!chatItem) return;
+      chatItem.chat = chatItem.chat ? chatItem.chat : {};
+      chatItem.chat.messages = chatItem.chat.messages ? chatItem.chat.messages : [];
+      chatItem.chat.messages.push(msg);
+      if (state.systemInfo.activeChatId == chatId) {
+        state.systemInfo.activeChatMessages = chatItem.chat.messages;
+      }
+
+
     }
+
   },
 
   actions: {

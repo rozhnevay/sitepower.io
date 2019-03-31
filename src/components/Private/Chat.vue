@@ -6,9 +6,9 @@
           <div class="card-body contacts_body">
             <ul class="contacts">
               <li v-for="chat in chats">
-                <div class="d-flex bd-highlight" @click="openChat(chat)" v-bind:class="activeChat.status">
+                <div class="d-flex bd-highlight" @click="openChat(chat)" v-bind:class="chat.status">
                   <div class="user_info">
-                    <span>{{chat.id}}</span>
+                    <span>Example Chat # {{chat.id}}</span>
                     <p>{{chat.created}}</p>
                   </div>
                 </div>
@@ -17,34 +17,48 @@
           </div>
         </div>
       </div>
-      <chat-body-component :id="activeChat.id"></chat-body-component>
+      <chat-body-component :id="activeChatId"></chat-body-component>
     </div>
   </div>
 </template>
 
 <script>
+  /*<div class="d-flex bd-highlight" @click="openChat(chat)" v-bind:class="[ activeChat.id == chat.id ? 'active' : 'inactive']">*/
   import axios from "axios";
   import ChatBody from '../Private/ChatBody';
   export default {
     name: 'Chat',
     data () {
       return {
-        chats : [],
-        activeChat: {status : "inactive", id: ""}
+        //activeChat: {status : "inactive", id: "", messages : []}
       }
     },
     created() {
       axios.get("/api/chats").then((res) => {
-        console.log(res.data);
-        this.chats = res.data;
+        this.$store.commit('initChats', res.data);
       }).catch((err) => {
       })
 
     },
     methods: {
       openChat(chat) {
-        this.activeChat.status= "active"
-        this.activeChat.id = chat.sitepower_id;
+        this.chats.map(item => item.status = (item.id != chat.id) ? "inactive" : "active");
+        this.$store.commit('setActiveChatId', chat.sitepower_id);
+      },
+      /*getMessages() {
+        axios.get("/api/chat/" + this.activeChat.id).then((res) => {
+          this.activeChat.messages = res.data.chat.messages;
+          console.log(this.activeChat.messages);
+        }).catch((err) => {
+        })
+      }*/
+    },
+    computed: {
+      chats() {
+        return this.$store.getters.getChats;
+      },
+      activeChatId() {
+        return this.$store.getters.getActiveChatId;
       }
     },
     components: {
@@ -53,7 +67,7 @@
   }
 </script>
 
-<style scoped>
+<style>
 
   .chat{
     margin-top: auto;
@@ -66,7 +80,7 @@
     background: linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);*/
   }
   .card{
-    height: 500px;
+    min-height: 500px;
     border-radius: 15px !important;
     background-color: rgba(0,0,0,0.4) !important;
   }
@@ -74,6 +88,7 @@
     margin-top: auto;
     margin-bottom: auto;
     margin-left: 15px;
+
   }
   .user_info span{
     font-size: 20px;
@@ -89,6 +104,7 @@
   .contacts{
     list-style: none;
     padding: 0;
+
   }
   .contacts li{
     width: 100% !important;

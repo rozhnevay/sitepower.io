@@ -10,7 +10,7 @@ module.exports = {
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {"/api": "http://localhost:3000"},
+    proxyTable: {"/api": "http://localhost:3000", "/socket.io":"http://localhost:3000/socket.io"},
 
     // Various Dev Server settings
     host: 'localhost', // can be overwritten by process.env.HOST
