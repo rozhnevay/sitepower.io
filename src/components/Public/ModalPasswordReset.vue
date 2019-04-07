@@ -125,14 +125,3 @@
     }
   };
 </script>
-
-<style lang="scss">
-  .fa-exclamation-circle {
-    color: red;
-  }
-  .fa-check {
-    color: green;
-  }
-</style>
-
-

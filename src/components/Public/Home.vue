@@ -9,6 +9,3 @@ export default Vue.extend({
   name: "home-component",
 });
 </script>
-<style scoped>
-
-</style>

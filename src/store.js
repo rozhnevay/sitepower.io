@@ -24,7 +24,7 @@ export default new Vuex.Store({
 
   getters: {
     isUserLoggedIn: state => {
-      return state.userInfo.isLoggedIn;
+      return true;//state.userInfo.isLoggedIn;
     },
     isUserSignedUp: state => {
       return state.userInfo.isSignedUp;

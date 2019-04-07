@@ -1,28 +1,19 @@
 <template>
-  <nav class="navbar navbar-default navbar-fixed-top templatemo-nav" role="navigation">
+  <div class="header">
     <div class="container">
-      <div class="navbar-header">
-        <button class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-          <span class="icon icon-bar"></span>
-          <span class="icon icon-bar"></span>
-          <span class="icon icon-bar"></span>
-        </button>
+      <div class="logo">
+        <a href=""><img src="../../assets/logo.svg" width="236px" alt=""></a>
       </div>
-      <div v-if="isUserLoggedIn" class="collapse navbar-collapse">
-        <ul class="nav navbar-nav navbar-right text-uppercase">
-          <li><a @click="chatOpen">My Chats</a></li>
-          <li><a @click="prefOpen">My Preferences</a></li>
+      <div v-if="isUserLoggedIn" class="menu">
+        <ul>
+          <li class="active"><a href="">My Chats <span class="badge badge-warning">5</span></a></li>
+          <li><a @click="chatOpen">Widget Designer</a></li>
+          <li><a @click="prefOpen">Payments <span class="badge badge-warning">{{account.balance}}</span></a></li>
         </ul>
       </div>
-      <div v-show="isMenuOpen" class="navbar-end">
-        <menu-component></menu-component>
-      </div>
-
-      <div class="navbar-end is-hidden-mobile">
-        <menu-component></menu-component>
-      </div>
+      <menu-component></menu-component>
     </div>
-  </nav>
+  </div>
 </template>
 
 <script>
@@ -31,7 +22,10 @@
     name: "private-header-component",
     data () {
       return {
-        isMenuOpen: false
+        isMenuOpen: false,
+        account:{
+          balance : "15$"
+        }
       }
     },
     methods : {
@@ -52,4 +46,3 @@
     },
   }
 </script>
-

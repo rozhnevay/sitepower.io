@@ -20,15 +20,29 @@
         </p>
       </div>
     </div>
-    <div v-if="isUserLoggedIn" class="navbar-item has-dropdown is-hoverable">
-      <a class="navbar-link">
-        Welcome {{ getUserName }}
-      </a>
-      <div class="navbar-dropdown is-boxed">
-        <hr class="navbar-divider">
-        <a class="navbar-item" @click="logout">
-          {{ logoutLabel }}
-        </a>
+    <!--<div v-if="isUserLoggedIn" class="navbar-item has-dropdown is-hoverable">-->
+      <!--<a class="navbar-link">-->
+        <!--Welcome {{ getUserName }}-->
+      <!--</a>-->
+      <!--<div class="navbar-dropdown is-boxed">-->
+        <!--<hr class="navbar-divider">-->
+        <!--<a class="navbar-item" @click="logout">-->
+          <!--{{ logoutLabel }}-->
+        <!--</a>-->
+      <!--</div>-->
+    <!--</div>-->
+    <div v-if="isUserLoggedIn" class="buttons">
+      <div class="btn-group">
+        <button type="button" class="btn btn-outline-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          {{ getUserName }}
+        </button>
+        <div class="dropdown-menu dropdown-menu-right">
+          <button class="dropdown-item" type="button" @click="chatOpen">Chats</button>
+          <button class="dropdown-item" type="button">Payments <span class="badge badge-warning">55$</span></button>
+          <button class="dropdown-item" type="button" @click="prefOpen">Settings</button>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" @click="logout">{{ logoutLabel }}</a>
+        </div>
       </div>
     </div>
   </div>
@@ -87,13 +101,15 @@
       },
       showSignupModal () {
         this.$store.commit('showSignupModal', true);
-      }
+      },
+      chatOpen () {
+        this.$store.commit('privateOpen', 'Chat');
+      },
+      prefOpen() {
+        this.$store.commit('privateOpen', 'Pref');
+      },
     }
   }
 </script>
 
-<style scoped>
-  .navbar-dropdown {
-    z-index: 9999;
-  }
-</style>
+

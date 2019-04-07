@@ -4,8 +4,13 @@ import Vue from 'vue'
 import App from './App'
 import router from './router/index.js'
 import store from './store';
-import VueSocketIO from 'vue-socket.io'
-
+import 'bootstrap/dist/css/bootstrap.min.css';
+import '@fortawesome/fontawesome-free/css/all.min.css';
+import './styles/style.css'
+import 'jquery/dist/jquery.slim.min.js';
+import 'popper.js/dist/popper.min.js';
+import 'bootstrap/dist/js/bootstrap.min.js';
+import './js/custom.js'
 
 Vue.config.productionTip = false
 

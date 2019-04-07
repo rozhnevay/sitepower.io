@@ -251,13 +251,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-.fa-exclamation-circle {
-  color: red;
-}
-.fa-check {
-  color: green;
-}
-</style>
-
 

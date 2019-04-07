@@ -29,5 +29,3 @@
   }
 </script>
 
-<style lang="scss" src="./global-style.scss">
-</style>

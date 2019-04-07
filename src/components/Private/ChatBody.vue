@@ -1,13 +1,84 @@
 <template>
-  <div class="col-md-8 col-xl-6 chat-body">
-    <div class="card">
-      <span>Chat with {{getId}}</span>
-      <ul id="messages">
-        <li v-for="msg in messages" class="message" v-bind:class="msg.direction">{{msg.body}}</li>
-      </ul>
-      <form action="">
-        <input id="m" autocomplete="off" v-model="msg" /><button v-on:click.prevent="submitForm">Send</button>
-      </form>
+  <div class="chat">
+    <div class="messages overflow-auto">
+      <div class="systems">
+        <p class="msg">Клиент открыл чат</p>
+        <span class="time">18:30:14</span>
+      </div>
+
+      <div class="client">
+        <span class="msg">Здравствуйте, помогите мне с регистрацией</span>
+        <span class="time">18:31:05</span>
+      </div>
+
+      <div class="admin">
+        <span class="time">18:32:42</span>
+        <span class="msg">Добрый день, где именно у вас возникли трудности? Вот пошаговая инструкция: 1. Нажмите на кнопку «Регистрация» в правом верхнем углу. 2. Заполните поля и нажмите  «Зарегистрироваться». 3. Подтвердите вашу почту по сообщению которое пришло вам на Email. 4. Войдите с помощью ваших данных. Если возникли вопросы, позвоните нам: +7(708)32-32-1 Звонок Бесплатный</span>
+      </div>
+
+      <div class="new-msg-separator">
+        Новые сообщения
+      </div>
+
+      <div class="client">
+        <span class="msg">Спасибо большое за ответ</span>
+        <span class="time">18:35:12</span>
+      </div>
+
+      <div class="client">
+        <span class="msg">Подскажите, я проживаю в США и мне не приходит СМС с регистрацией. Что делать? Можете мне код инвдивидуально кинуть, вот мой номер: +8(123)123-123-12</span>
+        <span class="time">18:36:48</span>
+      </div>
+
+      <div class="client">
+        <span class="msg">И возникла ошибка регистрации аккаунта, "System uptime error. 102".</span>
+        <span class="time">18:37:03</span>
+      </div>
+
+      <div class="client">
+            <span class="msg">
+              Вот скриншоты ошибок
+              <span class="attachment badge badge-light">
+                <i class="fas fa-file"></i>
+                Screenshot-1
+              </span>
+              <span class="attachment badge badge-light">
+                <i class="fas fa-file"></i>
+                Screenshot-2
+              </span>
+            </span>
+        <span class="time">18:37:03</span>
+      </div>
+
+    </div>
+
+    <div class="info">
+      <div class="systems text-left">
+        <p class="msg">Клиент печатает...</p>
+      </div>
+    </div>
+
+    <div class="input">
+
+      <div class="left">
+        <div class="pin-file">
+          <input type="file" name="file-6[]" id="file-6" class="inputfile inputfile-5" hidden data-multiple-caption="{count} files selected" multiple />
+          <label for="file-6"><img src="../../assets/files.svg" alt=""></label>
+        </div>
+
+        <div class="smiles">
+          <i class="fas fa-smile"></i>
+        </div>
+
+        <div class="msg">
+          <input type="text" placeholder="Enter your message">
+        </div>
+      </div>
+
+      <div class="button">
+        <img src="../../assets/send.svg" alt="">
+      </div>
+
     </div>
   </div>
 </template>
@@ -18,18 +89,8 @@
   import VueSocketIO from 'vue-socket.io';
   import SocketIO from 'socket.io-client';
   import store from '../../store';
-
   Vue.use(require('vue-moment'));
-  Vue.use(new VueSocketIO({
-    debug: true,
-    connection: SocketIO('/', {path:'/socket.io'}),
-    vuex: {
-      store,
-      actionPrefix: 'socket_',
-      mutationPrefix: 'socket_'
-    },
 
-  }))
 
   export default Vue.extend({
     name: 'ChatBody',
@@ -52,6 +113,16 @@
       }
     },*/
     mounted() {
+      Vue.use(new VueSocketIO({
+        debug: true,
+        connection: SocketIO('http://localhost:3031/', {path:'/socket.io'}),
+        vuex: {
+          store,
+          actionPrefix: 'socket_',
+          mutationPrefix: 'socket_'
+        },
+
+      }))
     },
     methods: {
 
