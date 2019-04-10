@@ -1,17 +1,17 @@
 <template>
   <div class="chat">
     <div class="messages overflow-auto">
-      <div class="systems">
-        <p class="msg">Клиент открыл чат</p>
-        <span class="time">18:30:14</span>
+      <!--<div class="systems">-->
+        <!--<p class="msg">Клиент открыл чат</p>-->
+        <!--<span class="time">18:30:14</span>-->
+      <!--</div>-->
+
+      <div v-for="msg in messages" :class="[ msg.direction == 'from_user' ?  'admin' : 'client' ]">
+        <span class="msg">{{msg.body}}</span>
+        <span class="time">{{msg.created | moment("HH:mm:ss")}}</span>
       </div>
 
-      <div class="client">
-        <span class="msg">Здравствуйте, помогите мне с регистрацией</span>
-        <span class="time">18:31:05</span>
-      </div>
-
-      <div class="admin">
+      <!--<div class="admin">
         <span class="time">18:32:42</span>
         <span class="msg">Добрый день, где именно у вас возникли трудности? Вот пошаговая инструкция: 1. Нажмите на кнопку «Регистрация» в правом верхнем углу. 2. Заполните поля и нажмите  «Зарегистрироваться». 3. Подтвердите вашу почту по сообщению которое пришло вам на Email. 4. Войдите с помощью ваших данных. Если возникли вопросы, позвоните нам: +7(708)32-32-1 Звонок Бесплатный</span>
       </div>
@@ -57,7 +57,8 @@
         <p class="msg">Клиент печатает...</p>
       </div>
     </div>
-
+-->
+    </div>
     <div class="input">
 
       <div class="left">
@@ -71,15 +72,16 @@
         </div>
 
         <div class="msg">
-          <input type="text" placeholder="Enter your message">
+          <textarea maxlength="1000" placeholder="Enter your message" v-model="msg"></textarea>
         </div>
       </div>
 
-      <div class="button">
+      <div class="button" @click="submitForm">
         <img src="../../assets/send.svg" alt="">
       </div>
 
     </div>
+
   </div>
 </template>
 
@@ -89,8 +91,9 @@
   import VueSocketIO from 'vue-socket.io';
   import SocketIO from 'socket.io-client';
   import store from '../../store';
+  import autosize from 'autosize';
   Vue.use(require('vue-moment'));
-
+  import * as jquery from 'jquery'
 
   export default Vue.extend({
     name: 'ChatBody',
@@ -123,6 +126,10 @@
         },
 
       }))
+      autosize(jquery('.input .msg textarea'));
+     },
+    updated() {
+      jquery(".messages").animate({ scrollTop: 99999 }, "fast");
     },
     methods: {
 
@@ -134,8 +141,7 @@
         sendMessage.body = this.msg;
         this.$socket.emit("send", sendMessage);
         this.msg = "";
-        //this.messages.push({direction:"from_user", body:this.msg, time:Date.now()});
-
+        autosize(jquery('.input .msg textarea'));
       }
     },
     computed : {
@@ -143,50 +149,14 @@
         return this.$store.getters.getActiveChatId;
       },
       messages() {
-         return this.$store.getters.getActiveChatMessages;
+         if (jquery(".item.selected").length === 0) {
+           jquery(".item").first().addClass("selected");
+         }
+
+         let f = this.$store.getters.getChats.filter(item => item.sitepower_id == this.getId);
+         if (f && f[0] && f[0].messages)
+         return f[0].messages;
       }
     }
   })
 </script>
-
-<style scoped>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font: 13px Helvetica, Arial; }
-  form { background: #000; padding: 3px; position: absolute; bottom: 0; width: 100%; }
-  form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; color: black; }
-  form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
-  #messages { list-style-type: none; margin: 0; padding: 0; }
-  #messages li { padding: 5px 10px; margin-top: 2px;}
-  .card {
-    padding : 10px
-  }
-
-  .message.from_user {
-    margin-top: auto;
-    margin-bottom: auto;
-    margin-right: 10px;
-    border-radius: 25px;
-    background-color: #78e08f;
-    padding: 10px;
-    position: relative;
-    display: block;
-  }
-  .message.to_user {
-    margin-top: auto;
-    margin-bottom: auto;
-    margin-left: 10px;
-    border-radius: 25px;
-    background-color: #82ccdd;
-    padding: 10px;
-    position: relative;
-    display: block;
-  }
-  .message-time {
-    position: absolute;
-    left: 0;
-    bottom: -15px;
-    color: rgba(255,255,255,0.5);
-    font-size: 10px;
-  }
-</style>
-

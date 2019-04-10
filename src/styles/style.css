@@ -165,10 +165,12 @@
   background-color: #F2F7F7;
   display: flex;
   flex-direction: column;
+  width : 60%;
 }
 .main .chat .messages {
   padding-right: 30px;
   padding-left: 30px;
+  height: 100%;
 }
 .main .chat .info {
   padding-right: 30px;
@@ -219,6 +221,7 @@
   padding-bottom: 14px;
   padding-left: 15px;
   padding-right: 15px;
+  overflow-x: hidden;
 }
 .main .chat .messages .client .msg .attachment {
   display: block;
@@ -245,11 +248,12 @@
   padding-bottom: 14px;
   padding-left: 15px;
   padding-right: 15px;
+  overflow-x: hidden;
 }
 .main .chat .messages .admin .time {
   color:#AAAAAA;
   font-size: 12px;
-  margin-right: 20px;
+  margin-left: 20px;
 }
 .new-msg-separator {
   /* Чтобы спрятать часть линий, которые
@@ -297,7 +301,7 @@
   right: -14px;
 }
 .main .input {
-  height: 60px;
+  /*height: 60px;*/
   display: flex;
   background-color: white;
   flex-direction: row;
@@ -325,6 +329,10 @@
 }
 .main .input .button {
   margin-right: 20px;
+}
+
+.main .input .button:hover {
+  cursor: pointer;
 }
 .main .input .msg {
   margin-left: 20px;
@@ -644,4 +652,15 @@
     width: 100%;
     height: auto;
   }
+}
+/**/
+.msg textarea {
+  width: 100%;
+  outline: none;
+  border: none;
+  overflow: auto;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  padding-top: 28px;
 }

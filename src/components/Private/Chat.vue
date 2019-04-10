@@ -38,8 +38,6 @@
               </div>
 
             </div>
-
-
             <div class="status">
               <!--<span v-if="chat.sitepower_id === activeChatId" class="badge badge-light">NOW </span>-->
               <span v-if="chat.countUnread() > 0" class="badge badge-danger">UNREAD <span  class="badge badge-light">{{chat.countUnread()}}</span></span>
@@ -83,7 +81,6 @@
             return {};
           };
           item.countUnread = () => {
-            console.log("countUnread");
             if (item.messages && item.messages.length) {
               let unread = item.messages.filter(u => moment(u.created) > moment(item.lastOpenDt))
               if (unread && unread.length > 0) {
@@ -96,11 +93,10 @@
         chats.sort((a,b)=> {
           let alastMC = a.lastMessage().created;
           let blastMC = b.lastMessage().created;
-          if (moment(alastMC) < moment(blastMC)) return -1
-          else if (moment(alastMC) > moment(blastMC)) return 1
+          if (moment(alastMC) < moment(blastMC)) return 1
+          else if (moment(alastMC) > moment(blastMC)) return -1
           else return 0
         });
-        console.log(chats);
         this.$store.commit('initChats', chats);
       }).catch((err) => {
         console.log("Error in getting chats: ", err.message)
@@ -109,7 +105,6 @@
     },
     methods: {
       openChat(e) {
-        //this.chats.map(item => item.status = (item.id != chat.id) ? "inactive" : "active");
         jquery(".item").removeClass("selected");
         jquery(e.target).closest(".item").addClass("selected");
 
