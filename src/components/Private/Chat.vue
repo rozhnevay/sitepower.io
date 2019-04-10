@@ -17,21 +17,23 @@
         </div>
 
         <div class="chats overflow-auto">
-          <div class="item selected">
+
+
+          <div v-for="chat in chats" @click="openChat" v-bind:id="chat.sitepower_id" class="item">
 
             <div class="left">
 
               <div class="img">
                 <img src="../../assets/logo-lightning.svg" height="25px" alt="">
-                <span class="color red"></span>
+                <span class="color" v-if="chat.class" v-bind:id=chat.class></span>
               </div>
 
               <div class="text">
                   <span class="title">
-                    Hosters.ru
+                    {{chat.name}}
                   </span>
                 <div class="message">
-                  Спасибо большое за ответ…
+                    {{chat.lastMessage.body}}
                 </div>
               </div>
 
@@ -39,11 +41,13 @@
 
 
             <div class="status">
-              <span class="badge badge-light">NEW</span>
+              <!--<span v-if="chat.sitepower_id === activeChatId" class="badge badge-light">NOW </span>-->
+              <span v-if="chat.countUnread > 0" class="badge badge-danger">UNREAD <span  class="badge badge-light">{{chat.countUnread}}</span></span>
+              <small class="text-muted">{{chat.lastMessage.created | moment("HH:mm")}}</small>
             </div>
           </div>
 
-          <div class="item">
+<!--          <div class="item">
 
             <div class="left">
 
@@ -197,7 +201,7 @@
             <div class="status">
               <span class="badge badge-danger">UNREAD <span class="badge badge-light">5</span></span>
             </div>
-          </div>
+          </div>-->
 
         </div>
       </div>
@@ -211,6 +215,10 @@
   import axios from "axios";
   import ChatBody from '../Private/ChatBody';
   import ChatInfo from '../Private/ChatInfo';
+  import 'jquery';
+  import * as jquery from 'jquery'
+  import Vue from 'vue';
+  Vue.use(require('vue-moment'));
   export default {
     name: 'Chat',
     data () {
@@ -227,17 +235,13 @@
 
     },
     methods: {
-      openChat(chat) {
-        this.chats.map(item => item.status = (item.id != chat.id) ? "inactive" : "active");
-        this.$store.commit('setActiveChatId', chat.sitepower_id);
-      },
-      /*getMessages() {
-        axios.get("/api/chat/" + this.activeChat.id).then((res) => {
-          this.activeChat.messages = res.data.chat.messages;
-          console.log(this.activeChat.messages);
-        }).catch((err) => {
-        })
-      }*/
+      openChat(e) {
+        //this.chats.map(item => item.status = (item.id != chat.id) ? "inactive" : "active");
+        jquery(".item").removeClass("selected");
+        jquery(e.target).closest(".item").addClass("selected");
+
+        this.$store.commit('setActiveChatId', jquery(e.target).closest(".item").attr('id'));
+      }
     },
     computed: {
       chats() {

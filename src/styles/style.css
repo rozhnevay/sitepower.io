@@ -143,6 +143,22 @@
 .main .left-side .chats .item .left .text .message{
   font-size: 10px;
   color:#808080;
+  width: 190px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.main .left-side .chats .item .status {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  min-width: 25%;
+}
+
+.main .left-side .chats .item .right {
+  display: flex;
+  flex-direction: column;
+  text-align: right;
 }
 
 .main .chat {
