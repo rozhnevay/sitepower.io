@@ -7,8 +7,9 @@
       <!--</div>-->
 
       <div v-for="msg in messages" :class="[ msg.direction == 'from_user' ?  'admin' : 'client' ]">
-        <span class="msg">{{msg.body}}</span>
+        <span v-if="msg.direction == 'to_user'" class="msg">{{msg.body}}</span>
         <span class="time">{{msg.created | moment("HH:mm:ss")}}</span>
+        <span v-if="msg.direction == 'from_user'" class="msg">{{msg.body}}</span>
       </div>
 
       <!--<div class="admin">
@@ -67,10 +68,38 @@
           <label for="file-6"><img src="../../assets/files.svg" alt=""></label>
         </div>
 
+<!--
         <div class="smiles">
-          <i class="fas fa-smile"></i>
+          <i class="fas fa-smile" data-emojiable="true"></i>
         </div>
-
+-->
+        <emoji-picker @emoji="append" :search="search">
+          <div
+            class="smiles fas fa-smile"
+            slot="emoji-invoker"
+            slot-scope="{ events: { click: clickEvent } }"
+            @click.stop="clickEvent"
+            v-on="events"
+          >
+          </div>
+          <div slot="emoji-picker" slot-scope="{ emojis, insert, display }">
+            <div class="emoji-picker" :style="{ top: -18 + 'rem', left: 0 + 'rem' }">
+              <div>
+                <div v-for="(emojiGroup, category) in emojis" :key="category">
+                  <h5>{{ category }}</h5>
+                  <div class="emojis">
+                <span
+                  v-for="(emoji, emojiName) in emojiGroup"
+                  :key="emojiName"
+                  @click="insert(emoji)"
+                  :title="emojiName"
+                >{{ emoji }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </emoji-picker>
         <div class="msg">
           <textarea maxlength="1000" placeholder="Enter your message" v-model="msg"></textarea>
         </div>
@@ -94,6 +123,8 @@
   import autosize from 'autosize';
   Vue.use(require('vue-moment'));
   import * as jquery from 'jquery'
+  import EmojiPicker from 'vue-emoji-picker'
+
 
   export default Vue.extend({
     name: 'ChatBody',
@@ -142,7 +173,10 @@
         this.$socket.emit("send", sendMessage);
         this.msg = "";
         autosize(jquery('.input .msg textarea'));
-      }
+      },
+      append(emoji) {
+        this.msg += emoji
+      },
     },
     computed : {
       getId () {
@@ -157,6 +191,88 @@
          if (f && f[0] && f[0].messages)
          return f[0].messages;
       }
+    },
+    directives: {
+      focus: {
+        inserted(el) {
+          el.focus()
+        },
+      },
+     },
+    components: {
+      'emoji-picker' : EmojiPicker,
     }
   })
 </script>
+<style scoped>
+  .left {
+    position: relative;
+    display: inline-block;
+  }
+  .emoji-invoker {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .emoji-invoker:hover {
+    transform: scale(1.1);
+  }
+  .emoji-invoker > svg {
+    fill: #b1c6d0;
+  }
+
+  .emoji-picker {
+    position: absolute;
+    z-index: 1;
+    font-family: Montserrat;
+    border: 1px solid #ccc;
+    width: 15rem;
+    height: 20rem;
+    overflow: scroll;
+    padding: 1rem;
+    box-sizing: border-box;
+    border-radius: 0.5rem;
+    background: #fff;
+    box-shadow: 1px 1px 8px #c7dbe6;
+  }
+  .emoji-picker__search {
+    display: flex;
+  }
+  .emoji-picker__search > input {
+    flex: 1;
+    border-radius: 10rem;
+    border: 1px solid #ccc;
+    padding: 0.5rem 1rem;
+    outline: none;
+  }
+  .emoji-picker h5 {
+    margin-bottom: 0;
+    color: #b1b1b1;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    cursor: default;
+  }
+  .emoji-picker .emojis {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  .emoji-picker .emojis:after {
+    content: "";
+    flex: auto;
+  }
+  .emoji-picker .emojis span {
+    padding: 0.2rem;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  .emoji-picker .emojis span:hover {
+    background: #ececec;
+    cursor: pointer;
+  }
+</style>

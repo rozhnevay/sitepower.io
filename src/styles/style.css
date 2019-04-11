@@ -253,7 +253,7 @@
 .main .chat .messages .admin .time {
   color:#AAAAAA;
   font-size: 12px;
-  margin-left: 20px;
+  margin-right: 20px;
 }
 .new-msg-separator {
   /* Чтобы спрятать часть линий, которые

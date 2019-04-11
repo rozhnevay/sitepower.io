@@ -92,8 +92,9 @@ export default new Vuex.Store({
 
     },
     setActiveChatId: (state, id) => {
+      state.systemInfo.chats.filter(item => item.sitepower_id === state.systemInfo.activeChatId)[0].lastOpenDt = moment().format();
       state.systemInfo.activeChatId = id;
-      state.systemInfo.chats.filter(item => item.sitepower_id === id)[0].lastOpenDt = moment().format();
+
     },
     socket_receive: (state, msg) => {
       console.log("receive");
