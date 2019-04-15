@@ -6,66 +6,37 @@
         <!--<span class="time">18:30:14</span>-->
       <!--</div>-->
 
-      <div v-for="msg in messages" :class="[ msg.direction == 'from_user' ?  'admin' : 'client' ]">
-        <span v-if="msg.direction == 'to_user'" class="msg">{{msg.body}}</span>
-        <span class="time">{{msg.created | moment("HH:mm:ss")}}</span>
-        <span v-if="msg.direction == 'from_user'" class="msg">{{msg.body}}</span>
-      </div>
+      <div v-for="(msg, index) in messages" >
+        <div v-if="needNewSeparator(msg, index)" class="new-msg-separator">
+          New Messages
+        </div>
+        <div :class="[ msg.direction == 'from_user' ?  'admin' : 'client' ]">
+          <span v-if="msg.direction == 'to_user' && msg.link==''" class="msg">{{msg.body}}</span>
+          <span class="time">{{msg.created | moment("HH:mm:ss")}}</span>
+          <!--<span class="time">{{msg.created |moment('calendar', null, { sameDay: 'HH:mm:ss',  lastWeek: 'DD.MM HH:mm:ss', sameElse: 'DD.MM HH:mm:ss'})}}</span>-->
 
-      <!--<div class="admin">
-        <span class="time">18:32:42</span>
-        <span class="msg">Добрый день, где именно у вас возникли трудности? Вот пошаговая инструкция: 1. Нажмите на кнопку «Регистрация» в правом верхнем углу. 2. Заполните поля и нажмите  «Зарегистрироваться». 3. Подтвердите вашу почту по сообщению которое пришло вам на Email. 4. Войдите с помощью ваших данных. Если возникли вопросы, позвоните нам: +7(708)32-32-1 Звонок Бесплатный</span>
-      </div>
+          <span v-if="msg.direction == 'from_user' && msg.type=='text'" class="msg">{{msg.body}}</span>
+          <a v-if="msg.direction == 'from_user' && msg.type=='link'" class="msg" :href="msg.link"><span  class="attachment badge badge-light"><i class="fas fa-file"></i>{{msg.body}}</span></a>
 
-      <div class="new-msg-separator">
-        Новые сообщения
-      </div>
+        </div>
 
-      <div class="client">
-        <span class="msg">Спасибо большое за ответ</span>
-        <span class="time">18:35:12</span>
       </div>
+      <div  class="info"><div class="systems text-left">
+        <p v-if="printingFlag == 'Y'" class="msg">Клиент печатает...</p>
+        <p v-else class="msg" style="color:transparent">Waiting for a message</p>
+      </div></div>
 
-      <div class="client">
-        <span class="msg">Подскажите, я проживаю в США и мне не приходит СМС с регистрацией. Что делать? Можете мне код инвдивидуально кинуть, вот мой номер: +8(123)123-123-12</span>
-        <span class="time">18:36:48</span>
-      </div>
 
-      <div class="client">
-        <span class="msg">И возникла ошибка регистрации аккаунта, "System uptime error. 102".</span>
-        <span class="time">18:37:03</span>
-      </div>
 
-      <div class="client">
-            <span class="msg">
-              Вот скриншоты ошибок
-              <span class="attachment badge badge-light">
-                <i class="fas fa-file"></i>
-                Screenshot-1
-              </span>
-              <span class="attachment badge badge-light">
-                <i class="fas fa-file"></i>
-                Screenshot-2
-              </span>
-            </span>
-        <span class="time">18:37:03</span>
-      </div>
 
-    </div>
 
-    <div class="info">
-      <div class="systems text-left">
-        <p class="msg">Клиент печатает...</p>
-      </div>
-    </div>
--->
     </div>
     <div class="input">
 
       <div class="left">
         <div class="pin-file">
-          <input type="file" name="file-6[]" id="file-6" class="inputfile inputfile-5" hidden data-multiple-caption="{count} files selected" multiple />
-          <label for="file-6"><img src="../../assets/files.svg" alt=""></label>
+          <input type="file" name="file[]" id="file" ref="file" v-on:change="handleFileUpload()" class="inputfile inputfile-5" hidden data-multiple-caption="{count} files selected" multiple />
+          <label for="file"><img src="../../assets/files.svg" alt=""></label>
         </div>
 
 <!--
@@ -73,20 +44,18 @@
           <i class="fas fa-smile" data-emojiable="true"></i>
         </div>
 -->
-        <emoji-picker @emoji="append" :search="search">
+        <emoji-picker @emoji="append" :emojiTable="getCustomEmo">
           <div
             class="smiles fas fa-smile"
             slot="emoji-invoker"
             slot-scope="{ events: { click: clickEvent } }"
             @click.stop="clickEvent"
-            v-on="events"
           >
           </div>
           <div slot="emoji-picker" slot-scope="{ emojis, insert, display }">
             <div class="emoji-picker" :style="{ top: -18 + 'rem', left: 0 + 'rem' }">
               <div>
                 <div v-for="(emojiGroup, category) in emojis" :key="category">
-                  <h5>{{ category }}</h5>
                   <div class="emojis">
                 <span
                   v-for="(emoji, emojiName) in emojiGroup"
@@ -124,6 +93,8 @@
   Vue.use(require('vue-moment'));
   import * as jquery from 'jquery'
   import EmojiPicker from 'vue-emoji-picker'
+  import customEmo from '../../js/custom-emo';
+  import moment from 'moment';
 
 
   export default Vue.extend({
@@ -158,6 +129,13 @@
 
       }))
       autosize(jquery('.input .msg textarea'));
+      let self = this;
+      setInterval(() => {
+        console.log("dff");
+        if (moment(self.$store.getters.getActiveChatPrintingTm).add(moment.duration(1, 'seconds')) < moment()){
+          self.$store.commit("setActiveChatPrintingTm","");
+        }
+      }, 1000)
      },
     updated() {
       jquery(".messages").animate({ scrollTop: 99999 }, "fast");
@@ -170,13 +148,49 @@
         sendMessage.direction = "from_user";
         sendMessage.recepient_id = this.$store.getters.getActiveChatId;
         sendMessage.body = this.msg;
+        sendMessage.type = "text";
         this.$socket.emit("send", sendMessage);
         this.msg = "";
         autosize(jquery('.input .msg textarea'));
       },
       append(emoji) {
         this.msg += emoji
+        this.$el.querySelector(".input").click();
       },
+      needNewSeparator(msg, index){
+        if (msg.direction === "to_user" && moment(msg.created) > moment(this.getChatOpenDt)){
+          if(this.messages[index-1] && moment(this.messages[index-1].created) <= moment(this.getChatOpenDt)) {
+            return true;
+          }
+        }
+        return false;
+      },
+
+      handleFileUpload() {
+        let files = this.$refs.file.files;
+        for (var i = 0, n = files.length; i < n; i++){
+          let file = files[i];
+
+          // выставляем крутилку на скрепку
+          let formData = new FormData();
+          formData.append('file', file);
+          formData.append('filename', file.name);
+          axios.post("/api/upload", formData, {headers: {'Content-Type': 'multipart/form-data'}}).then((res) => {
+            let sendMessage = {};
+
+            sendMessage.direction = "from_user";
+            sendMessage.recepient_id = this.$store.getters.getActiveChatId;
+            sendMessage.body = file.name;
+            sendMessage.type = "link";
+            sendMessage.link = res.data;
+            this.$socket.emit("send", sendMessage);
+
+          }).catch(err => console.log(err.message))
+
+
+
+        }
+      }
     },
     computed : {
       getId () {
@@ -190,7 +204,23 @@
          let f = this.$store.getters.getChats.filter(item => item.sitepower_id == this.getId);
          if (f && f[0] && f[0].messages)
          return f[0].messages;
-      }
+      },
+      getChatOpenDt () {
+        let chat = this.$store.getters.getChats.filter(item => item.sitepower_id == this.getId)
+        if (chat && chat[0]) {
+          return chat[0].lastOpenDt;
+        }
+        return null;
+      },
+      getCustomEmo () {
+        return customEmo;
+      },
+      printingFlag(){
+        if (moment(this.$store.getters.getActiveChatPrintingTm).add(moment.duration(1, 'seconds')) > moment()){
+          return "Y";
+        }
+        return "N";
+      },
     },
     directives: {
       focus: {
@@ -200,28 +230,17 @@
       },
      },
     components: {
-      'emoji-picker' : EmojiPicker,
+      'emoji-picker' : EmojiPicker
     }
   })
 </script>
 <style scoped>
+
   .left {
     position: relative;
     display: inline-block;
   }
-  .emoji-invoker {
-    position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
-    width: 1.5rem;
-    height: 1.5rem;
-    border-radius: 50%;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .emoji-invoker:hover {
-    transform: scale(1.1);
-  }
+
   .emoji-invoker > svg {
     fill: #b1c6d0;
   }
@@ -233,30 +252,14 @@
     border: 1px solid #ccc;
     width: 15rem;
     height: 20rem;
-    overflow: scroll;
+    overflow-y: scroll;
     padding: 1rem;
     box-sizing: border-box;
     border-radius: 0.5rem;
     background: #fff;
     box-shadow: 1px 1px 8px #c7dbe6;
   }
-  .emoji-picker__search {
-    display: flex;
-  }
-  .emoji-picker__search > input {
-    flex: 1;
-    border-radius: 10rem;
-    border: 1px solid #ccc;
-    padding: 0.5rem 1rem;
-    outline: none;
-  }
-  .emoji-picker h5 {
-    margin-bottom: 0;
-    color: #b1b1b1;
-    text-transform: uppercase;
-    font-size: 0.8rem;
-    cursor: default;
-  }
+
   .emoji-picker .emojis {
     display: flex;
     flex-wrap: wrap;

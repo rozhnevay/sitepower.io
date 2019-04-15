@@ -3,6 +3,7 @@ import Vuex from 'vuex';
 
 Vue.use(Vuex);
 import moment from 'moment';
+import axios from "axios";
 export default new Vuex.Store({
   state: {
     userInfo: {
@@ -17,8 +18,7 @@ export default new Vuex.Store({
       privateOpen: 'Chat',
       chats : [],
       activeChatId: "",
-      activeChat: {},
-      activeChatMessages: []
+      activeChatPrintingTm: ""
     }
   },
 
@@ -52,13 +52,10 @@ export default new Vuex.Store({
     getActiveChatId: state => {
       return state.systemInfo.activeChatId;
     },
-    /*getActiveChat: state => {
-      return state.systemInfo.activeChat;
+    getActiveChatPrintingTm: state => {
+      return state.systemInfo.activeChatPrintingTm;
     }
-    ,
-    getActiveChatMessages: state => {
-      return state.systemInfo.activeChatMessages;
-    }*/
+
   },
   mutations: {
     isUserLoggedIn: (state, isUserLoggedIn) => {
@@ -92,9 +89,36 @@ export default new Vuex.Store({
 
     },
     setActiveChatId: (state, id) => {
-      state.systemInfo.chats.filter(item => item.sitepower_id === state.systemInfo.activeChatId)[0].lastOpenDt = moment().format();
+      let lastOpenDt = moment().format()
+      state.systemInfo.chats.filter(item => item.sitepower_id === state.systemInfo.activeChatId)[0].lastOpenDt = lastOpenDt;
       state.systemInfo.activeChatId = id;
+      state.systemInfo.activeChatPrintingTm = "";
+        axios.post("/api/chat/" + state.systemInfo.activeChatId, {lastOpenDt:lastOpenDt}).then((res) => {
+        console.log("lastUpd SUCCESS")
+      }).catch(err => console.log(err.message))
+    },
+    setActiveChatCategory: (state, cat) => {
+      state.systemInfo.chats.filter(item => item.sitepower_id === state.systemInfo.activeChatId)[0].class = cat;
 
+      axios.post("/api/chat/" + state.systemInfo.activeChatId, {class:cat}).then((res) => {
+      }).catch(err => console.log(err.message))
+
+    },
+    setActiveChatSpam: (state) => {
+      axios.post("/api/chat/" + state.systemInfo.activeChatId, {class:"SPAM"}).then((res) => {
+      }).catch(err => console.log(err.message))
+
+      state.systemInfo.chats = state.systemInfo.chats.filter(item => item.sitepower_id !== state.systemInfo.activeChatId);
+      if (state.systemInfo.chats.length > 0)
+        state.systemInfo.activeChatId = state.systemInfo.chats[0].sitepower_id
+      else
+        state.systemInfo.activeChatId = "";
+
+
+
+    },
+    setActiveChatPrintingTm: (state, val) => {
+      state.systemInfo.activeChatPrintingTm = val;
     },
     socket_receive: (state, msg) => {
       console.log("receive");
@@ -107,15 +131,28 @@ export default new Vuex.Store({
       }
       chatObj = state.systemInfo.chats.filter(item => item.sitepower_id == chatId);
       let chatItem = chatObj[0];
-      if (!chatItem) return;
-      chatItem = chatItem ? chatItem : {};
-      chatItem.messages = chatItem.messages ? chatItem.messages : [];
-      chatItem.messages.push(msg);
-    }
+      if (!chatItem) {
+        axios.get("/api/chat/" + chatId).then((res) => {
+          state.systemInfo.chats.push(res)
+        }).catch(err => console.log(err.message))
+      } else {
+        chatItem.messages.push(msg);
+      }
+      //chatItem = chatItem ? chatItem : {};
+      //chatItem.messages = chatItem.messages ? chatItem.messages : [];
 
+    },
+    socket_print: (state, msg) => {
+      console.log("print");
+      console.log(msg);
+      if (msg.sender_id === state.systemInfo.activeChatId) {
+        state.systemInfo.activeChatPrintingTm = msg.created;
+      }
+    }
   },
 
   actions: {
 
   }
 });
+

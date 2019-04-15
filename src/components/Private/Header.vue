@@ -6,7 +6,7 @@
       </div>
       <div v-if="isUserLoggedIn" class="menu">
         <ul>
-          <li class="active"><a href="">My Chats <span class="badge badge-warning">5</span></a></li>
+          <li class="active"><a href="">My Chats <span v-if="count > 0" class="badge badge-warning">{{count}}</span></a></li>
           <li><a @click="chatOpen">Widget Designer</a></li>
           <li><a @click="prefOpen">Payments <span class="badge badge-warning">{{account.balance}}</span></a></li>
         </ul>
@@ -39,6 +39,11 @@
     computed: {
       isUserLoggedIn () {
         return this.$store.getters.isUserLoggedIn;
+      },
+      count () {
+        let cnt = 0;
+        this.$store.getters.getChats.forEach(item => {cnt = parseInt(item.countUnread(), 10) + cnt});
+        return cnt;
       }
     },
     components: {

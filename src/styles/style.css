@@ -172,6 +172,8 @@
   padding-left: 30px;
   height: 100%;
 }
+
+
 .main .chat .info {
   padding-right: 30px;
   padding-left: 30px;
@@ -224,6 +226,11 @@
   overflow-x: hidden;
 }
 .main .chat .messages .client .msg .attachment {
+  display: block;
+  margin-top: 3px;
+  cursor: pointer;
+}
+.main .chat .messages .admin .msg .attachment {
   display: block;
   margin-top: 3px;
   cursor: pointer;
@@ -547,6 +554,7 @@
   width: 20px;
   border-radius: 50%;
   margin-right: 15px;
+  cursor: pointer;
 }
 .main .right-side .categories .color.active {
   height: 20px;
@@ -663,4 +671,14 @@
   -moz-box-shadow: none;
   box-shadow: none;
   padding-top: 28px;
+  max-height: 101px;
+}
+.msg textarea::-webkit-scrollbar {
+  -webkit-appearance: none;
+  width: 4px;
+  background-color: #F5F5F5;
+}
+.msg textarea::-webkit-scrollbar-thumb {
+  background-color: #A0A0A0;
+  border-radius: 10px;
 }
