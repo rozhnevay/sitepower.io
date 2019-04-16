@@ -17,7 +17,7 @@
     },
     components: {
       'Chat': Chat,
-      'Pref': Pref
+      'Pref': Pref,
     },
   }
 </script>

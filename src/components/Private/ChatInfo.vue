@@ -10,8 +10,8 @@
       <div class="information">
         <span class="title">Information</span>
         <p class="items">Region: Moscow</p>
-        <p class="items">Email: maksim@example.com</p>
-        <p class="items">Phone: +7(708)32-32-2</p>
+        <p class="items" v-if="chat.login">Email: {{chat.login}}</p>
+        <p class="items" v-if="chat.phone">Phone: {{chat.phone}}</p>
         <hr>
       </div>
       <div class="actions">
@@ -19,7 +19,7 @@
         <div class="buttons">
           <button class="btn btn-red" @click="setSpam">Add to spam</button>
           <!--<button class="btn btn-blue">Send dialog via Email</button>-->
-          <button class="btn btn-blue">Add contact information</button>
+          <button class="btn btn-blue" data-target="#chatinfo" data-toggle="modal" @click="showChatInfoModal">Add contact information</button>
         </div>
       </div>
       <div class="categories">
@@ -36,6 +36,7 @@
         </div>
       </div>
     </div>
+    <chat-info-modal-component></chat-info-modal-component>
   </div>
 
 </template>
@@ -43,20 +44,22 @@
 <script>
   import axios from "axios";
   import * as jquery from 'jquery'
+  import ChatInfoModal from './ModalChatInfo';
   export default {
     name: 'ChatInfo',
     methods :{
       setClass(name){
-        // console.log("werwe "+ name);
-        // axios.post("/api/chat/" + this.getId, {class:name}).then((res) => {
-        //   this.chat.class = name;
-        // }).catch(err => console.log(err.message))
-
         this.$store.commit('setActiveChatCategory', name);
       },
       setSpam() {
         this.$store.commit('setActiveChatSpam');
+      },
+      showChatInfoModal () {
+        this.$root.$emit("chatinfo_open", this.chat);
+        this.$store.commit('showChatInfoModal', true);
       }
+
+
     },
     computed : {
       getId () {
@@ -69,6 +72,9 @@
         }
         return null;
       }
+    },
+    components : {
+      'chat-info-modal-component' : ChatInfoModal
     }
   }
 </script>

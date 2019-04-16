@@ -2,11 +2,11 @@
 <template>
 
   <div class="main">
-    <div class="mobile-message">
-      <div class="alert alert-warning m-0" role="alert">
-        Мы заметили что вы с телефона, перезагрузите страницу для корректного отображения
-      </div>
-    </div>
+    <!--<div class="mobile-message">-->
+      <!--<div class="alert alert-warning m-0" role="alert">-->
+        <!--Мы заметили что вы с телефона, перезагрузите страницу для корректного отображения-->
+      <!--</div>-->
+    <!--</div>-->
     <div class="left-side">
 
 <!--        <div class="input-group pr-3 pl-3 mt-2 mb-2">
@@ -42,7 +42,7 @@
               <!--<span v-if="chat.sitepower_id === activeChatId" class="badge badge-light">NOW </span>-->
               <span v-if="chat.countUnread() > 0" class="badge badge-danger">UNREAD <span  class="badge badge-light">{{chat.countUnread()}}</span></span>
               <!--<small class="text-muted">{{chat.lastMessage().created | moment("HH:mm")}}</small>-->
-              <small class="text-muted">{{chat.lastMessage().created | moment('calendar', null, { sameDay: 'HH:mm',  lastWeek: 'DD.MM.YYYY HH:mm', sameElse: 'DD.MM.YYYY HH:mm'})}}</small>
+              <small class="text-muted">{{chat.lastMessage().created | moment('calendar', null, { sameDay: 'HH:mm', lastDay : 'DD.MM.YYYY HH:mm', lastWeek: 'DD.MM.YYYY HH:mm', sameElse: 'DD.MM.YYYY HH:mm'})}}</small>
             </div>
           </div>
 
@@ -54,7 +54,6 @@
 </template>
 
 <script>
-  /*<div class="d-flex bd-highlight" @click="openChat(chat)" v-bind:class="[ activeChat.id == chat.id ? 'active' : 'inactive']">*/
   import axios from "axios";
   import ChatBody from '../Private/ChatBody';
   import ChatInfo from '../Private/ChatInfo';
@@ -64,11 +63,6 @@
   import moment from 'moment';
   export default {
     name: 'Chat',
-    data () {
-      return {
-
-      }
-    },
     mounted() {
       axios.get("/api/chats").then((res) => {
         let chats = res.data;
@@ -106,6 +100,7 @@
     methods: {
       openChat(chat) {
         this.$store.commit('setActiveChatId', chat.sitepower_id);
+
       },
       getChatClass(chat) {
         return "color " + chat.class;

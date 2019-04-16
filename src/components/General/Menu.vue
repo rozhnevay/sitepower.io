@@ -31,20 +31,7 @@
         <!--</a>-->
       <!--</div>-->
     <!--</div>-->
-    <div v-if="isUserLoggedIn" class="buttons">
-      <div class="btn-group">
-        <button type="button" class="btn btn-outline-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          {{ getUserName }}
-        </button>
-        <div class="dropdown-menu dropdown-menu-right">
-          <button class="dropdown-item" type="button" @click="chatOpen">Chats</button>
-          <button class="dropdown-item" type="button">Payments <span class="badge badge-warning">55$</span></button>
-          <button class="dropdown-item" type="button" @click="prefOpen">Settings</button>
-          <div class="dropdown-divider"></div>
-          <a class="dropdown-item" @click="logout">{{ logoutLabel }}</a>
-        </div>
-      </div>
-    </div>
+
   </div>
 </template>
 
@@ -54,7 +41,7 @@
     name: 'menu-component',
     data () {
       return {
-        logoutLabel: 'Log out',
+
         loginLabel: 'Log in',
         signupLabel: 'Sign up',
         privateLabel: 'My Account',
@@ -85,29 +72,14 @@
     },
 
     methods: {
-      logout () {
-        axios.get("/api/logout").then((res) => {
-          this.$store.commit('isUserLoggedIn', false);
-          this.$store.commit('isUserSignedUp', false);
-          this.$store.commit('logout', true);
-          this.$store.commit('privateOpen', 'Chat');
-          this.$router.push({ name: 'homepage-component' });
 
-        });
-
-      },
       showLoginModal () {
         this.$store.commit('showLoginModal', true);
       },
       showSignupModal () {
         this.$store.commit('showSignupModal', true);
       },
-      chatOpen () {
-        this.$store.commit('privateOpen', 'Chat');
-      },
-      prefOpen() {
-        this.$store.commit('privateOpen', 'Pref');
-      },
+
     }
   }
 </script>

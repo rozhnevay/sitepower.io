@@ -12,9 +12,6 @@ export default new Vuex.Store({
       name: ''
     },
     systemInfo: {
-      openLoginModal: false,
-      openSignupModal: false,
-      openResetModal: false,
       privateOpen: 'Chat',
       chats : [],
       activeChatId: "",
@@ -24,7 +21,7 @@ export default new Vuex.Store({
 
   getters: {
     isUserLoggedIn: state => {
-      return true;//state.userInfo.isLoggedIn;
+      return state.userInfo.isLoggedIn;
     },
     isUserSignedUp: state => {
       return state.userInfo.isSignedUp;
@@ -32,23 +29,12 @@ export default new Vuex.Store({
     getUserName: state => {
       return state.userInfo.name;
     },
-    isLoginModalOpen: state => {
-      return state.systemInfo.openLoginModal;
-    },
-    isSignupModalOpen: state => {
-      return state.systemInfo.openSignupModal;
-    },
-    isResetModalOpen: state => {
-      return state.systemInfo.openResetModal;
-    },
     privateOpen: state => {
       return state.systemInfo.privateOpen;
-    }
-    ,
+    },
     getChats: state => {
       return state.systemInfo.chats;
-    }
-    ,
+    },
     getActiveChatId: state => {
       return state.systemInfo.activeChatId;
     },
@@ -65,16 +51,7 @@ export default new Vuex.Store({
     isUserSignedUp: (state, isSignedUp) => {
       state.userInfo.isSignedUp = isSignedUp;
     },
-    showLoginModal: (state, show) => {
-      state.systemInfo.openLoginModal = show;
-    },
-    showSignupModal: (state, show) => {
-      state.systemInfo.openSignupModal = show;
-    },
-    showResetModal: (state, show) => {
-      state.systemInfo.openResetModal = show;
-      if (show) state.systemInfo.openLoginModal = !show;
-    },
+
     setUserName: (state, name) => {
       state.userInfo.name = name;
     },
@@ -113,9 +90,14 @@ export default new Vuex.Store({
         state.systemInfo.activeChatId = state.systemInfo.chats[0].sitepower_id
       else
         state.systemInfo.activeChatId = "";
+    },
+    setActiveChatContact: (state, item) => {
+      state.systemInfo.chats.filter(item => item.sitepower_id === state.systemInfo.activeChatId)[0].name = item.name;
+      state.systemInfo.chats.filter(item => item.sitepower_id === state.systemInfo.activeChatId)[0].login = item.login;
+      state.systemInfo.chats.filter(item => item.sitepower_id === state.systemInfo.activeChatId)[0].phone = item.phone;
 
-
-
+      axios.post("/api/chat/" + state.systemInfo.activeChatId, {name:item.name, login:item.login, phone:item.phone}).then((res) => {
+      }).catch(err => console.log(err.message))
     },
     setActiveChatPrintingTm: (state, val) => {
       state.systemInfo.activeChatPrintingTm = val;
@@ -124,16 +106,43 @@ export default new Vuex.Store({
       console.log("receive");
       console.log(msg);
       let chatObj, chatId;
+      console.log("hhh");
       if (msg.direction == "to_user") {
         chatId = msg.sender_id;
       } else {
         chatId = msg.recepient_id;
       }
+      console.log("fff");
       chatObj = state.systemInfo.chats.filter(item => item.sitepower_id == chatId);
       let chatItem = chatObj[0];
+      console.log("chatItem = " + chatItem);
       if (!chatItem) {
-        axios.get("/api/chat/" + chatId).then((res) => {
-          state.systemInfo.chats.push(res)
+        axios.get("/api/chat/" + chatId).then((item) => {
+          /* !!! TODO вынести в отдельный метод и реализовать через actions !!!*/
+          item = item.data;
+          item.lastMessage = () => {
+            if (item.messages && item.messages.length) {
+              return item.messages[item.messages.length - 1];
+            }
+            return {};
+          };
+          item.countUnread = () => {
+            if (item.messages && item.messages.length) {
+              let unread = item.messages.filter(u => moment(u.created) > moment(item.lastOpenDt) && u.direction === "to_user")
+              if (unread && unread.length > 0) {
+                return unread.length;
+              }
+            }
+            return 0;
+          }
+          state.systemInfo.chats.push(item)
+          state.systemInfo.chats.sort((a,b)=> {
+            let alastMC = a.lastMessage().created;
+            let blastMC = b.lastMessage().created;
+            if (moment(alastMC) < moment(blastMC)) return 1
+            else if (moment(alastMC) > moment(blastMC)) return -1
+            else return 0
+          });
         }).catch(err => console.log(err.message))
       } else {
         chatItem.messages.push(msg);

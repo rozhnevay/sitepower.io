@@ -104,19 +104,6 @@
         msg: ""
       }
     },
-/*
-    sockets: {
-      receive: function (msg) {
-        console.log("receive2");
-        //console.log("msg");
-      },
-      send: function (data) {
-        //this.messages.push({type:"received", body:data, time:Date.now()});
-      },
-      connected: function (data) {
-
-      }
-    },*/
     mounted() {
       Vue.use(new VueSocketIO({
         debug: true,
@@ -131,7 +118,6 @@
       autosize(jquery('.input .msg textarea'));
       let self = this;
       setInterval(() => {
-        console.log("dff");
         if (moment(self.$store.getters.getActiveChatPrintingTm).add(moment.duration(1, 'seconds')) < moment()){
           self.$store.commit("setActiveChatPrintingTm","");
         }
