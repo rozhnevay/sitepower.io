@@ -1,38 +1,28 @@
 <template>
-  <nav class="navbar navbar-default navbar-fixed-top templatemo-nav" role="navigation">
+  <div class="header">
     <div class="container">
-      <div class="navbar-header">
-        <button class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-          <span class="icon icon-bar"></span>
-          <span class="icon icon-bar"></span>
-          <span class="icon icon-bar"></span>
-        </button>
+      <div class="logo">
+        <a href=""><img src="http://cdn.nerokore.com/public/sp/assets/img/logo.svg" width="236px" height="48px" alt=""></a>
       </div>
-      <div class="collapse navbar-collapse">
-        <ul class="nav navbar-nav navbar-right text-uppercase">
-          <li><a href="#home">Home</a></li>
-          <li><a href="#feature">Features</a></li>
-          <li><a href="#pricing">Pricing</a></li>
-          <li><a href="#download">Download</a></li>
-          <li><a href="#contact">Contact</a></li>
+      <div class="menu">
+        <ul>
+          <li class="active"><a href="">Home</a></li>
+          <li><a href="">Features</a></li>
+          <li><a href="">Pricing</a></li>
+          <li><a href="">Download</a></li>
+          <li><a href="">Contact</a></li>
         </ul>
       </div>
-
-      <!-- For mobile and tablet -->
-      <div v-show="isMenuOpen" class="navbar-end">
-        <menu-component></menu-component>
-      </div>
-
-      <!-- For desktop -->
-      <div class="navbar-end is-hidden-mobile">
-        <menu-component></menu-component>
+      <div class="buttons d-flex justify-content-center">
+        <button type="button" class="btn btn-outline-light mr-2" data-target="#signup" data-toggle="modal" @click="showSignupModal"><i class="fas fa-user-plus"></i> Sign Up</button>
+        <button type="button" class="btn btn-outline-warning" data-target="#login" data-toggle="modal" @click="showLoginModal"><i class="fas fa-user"></i> Log In</button>
       </div>
     </div>
-  </nav>
+  </div> <!-- END HEADER -->
 </template>
 
 <script>
-    import Menu from '../General/Menu';
+    import axios from "axios";
     export default {
         name: "header-component",
         data () {
@@ -40,8 +30,27 @@
             isMenuOpen: false
           }
         },
-      components: {
-        'menu-component': Menu
+      methods : {
+        showLoginModal () {
+          this.$root.$emit("login_open");
+        },
+        showSignupModal () {
+          this.$root.$emit("signup_open");
+        }
+      },
+      beforeMount() {
+        axios.get("/api/user").then((res) => {
+          console.log(res);
+          this.$store.commit('isUserLoggedIn', true);
+          this.$store.commit('setUserName', res.data.user.name);
+          this.$store.commit('privateOpen', 'Chat');
+          this.isDataLoaded = true;
+        }).catch((err) => {
+          this.$store.commit('isUserLoggedIn', false);
+          this.$store.commit('setUserName', "");
+          this.isDataLoaded = true;
+        })
+
       },
     }
 </script>

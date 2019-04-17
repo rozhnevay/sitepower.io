@@ -20,7 +20,7 @@
             <button class="dropdown-item" type="button" @click="prefOpen">Administration</button>
             <button class="dropdown-item" type="button">Payments <span class="badge badge-warning">55$</span></button>
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item" @click="logout">{{ logoutLabel }}</a>
+            <button class="dropdown-item" @click="logout">{{ logoutLabel }}</button>
           </div>
         </div>
 
@@ -29,7 +29,6 @@
 </template>
 
 <script>
-  import Menu from '../General/Menu';
   import axios from "axios";
   export default {
     name: "private-header-component",
@@ -43,6 +42,7 @@
       }
     },
     beforeMount() {
+
       axios.get("/api/user").then((res) => {
         console.log(res);
         this.$store.commit('isUserLoggedIn', true);
@@ -67,7 +67,7 @@
         axios.get("/api/logout").then((res) => {
           this.$store.commit('isUserLoggedIn', false);
           this.$store.commit('isUserSignedUp', false);
-           this.$router.push({ name: 'homepage-component' });
+          this.$router.push({ name: 'homepage-component' });
 
         });
 
@@ -95,8 +95,6 @@
         return this.$store.getters.privateOpen
       }
     },
-    components: {
-      'menu-component': Menu
-    },
+
   }
 </script>

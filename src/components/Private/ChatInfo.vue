@@ -56,7 +56,6 @@
       },
       showChatInfoModal () {
         this.$root.$emit("chatinfo_open", this.chat);
-        this.$store.commit('showChatInfoModal', true);
       }
 
 
