@@ -3,7 +3,9 @@
 import Vue from "vue"
 import Router from "vue-router"
 import App from '../App';
-import 'babel-polyfill';
+import Administration from '../components/Private/Administration';
+import Chat from '../components/Private/Chat';
+
 
 Vue.use(Router)
 export default new Router({
@@ -13,7 +15,19 @@ export default new Router({
       path: "/",
       name: 'App',
       component: App,
-      props: true
+      props: false
+    },
+    {
+      path: "/admin",
+      name: 'Administration',
+      component: Administration,
+      props: false
+    },
+    {
+      path: "/chat",
+      name: 'Chat',
+      component: Chat,
+      props: false
     }
   ]
 })

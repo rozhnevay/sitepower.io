@@ -100,7 +100,6 @@
     methods: {
       openChat(chat) {
         this.$store.commit('setActiveChatId', chat.sitepower_id);
-
       },
       getChatClass(chat) {
         return "color " + chat.class;

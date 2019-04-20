@@ -37,7 +37,7 @@ export default {
       console.log(res);
       this.$store.commit('isUserLoggedIn', true);
       this.$store.commit('setUserName', res.data.user.name);
-      this.$store.commit('privateOpen', 'Chat');
+      this.$router.push({ name: 'Administration' });
       this.isDataLoaded = true;
     }).catch((err) => {
       this.$store.commit('isUserLoggedIn', false);

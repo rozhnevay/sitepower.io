@@ -12,9 +12,12 @@ export default new Vuex.Store({
       name: ''
     },
     systemInfo: {
-      privateOpen: 'Chat',
       chats : [],
+      forms: [],
+      operators : [],
+      activeFormId: "",
       activeChatId: "",
+      activeOperatorId:"",
       activeChatPrintingTm: ""
     }
   },
@@ -29,14 +32,23 @@ export default new Vuex.Store({
     getUserName: state => {
       return state.userInfo.name;
     },
-    privateOpen: state => {
-      return state.systemInfo.privateOpen;
-    },
     getChats: state => {
       return state.systemInfo.chats;
     },
+    getForms: state => {
+      return state.systemInfo.forms;
+    },
+    getOperators: state => {
+      return state.systemInfo.operators;
+    },
     getActiveChatId: state => {
       return state.systemInfo.activeChatId;
+    },
+    getActiveFormId: state => {
+      return state.systemInfo.activeFormId;
+    },
+    getActiveOperatorId: state => {
+      return state.systemInfo.activeOperatorId;
     },
     getActiveChatPrintingTm: state => {
       return state.systemInfo.activeChatPrintingTm;
@@ -55,15 +67,29 @@ export default new Vuex.Store({
     setUserName: (state, name) => {
       state.userInfo.name = name;
     },
-    privateOpen: (state, type) => {
-      state.systemInfo.privateOpen = type;
-    },
     initChats: (state, chats) => {
       state.systemInfo.chats = chats;
       if (state.systemInfo.chats && state.systemInfo.chats[0]) {
         state.systemInfo.activeChatId = state.systemInfo.chats[0].sitepower_id;
       }
-
+    },
+    initForms: (state, forms) => {
+      state.systemInfo.forms = forms;
+      if (forms && forms[0]) {
+        state.systemInfo.activeFormId = forms[0].id;
+      }
+    },
+    initOperators: (state, operators) => {
+      state.systemInfo.operators = operators;
+      if (operators && operators[0]) {
+        state.systemInfo.activeOperatorId = operators[0].id;
+      }
+    },
+    setActiveFormId: (state, id) => {
+      state.systemInfo.activeFormId = id;
+    },
+    setActiveOperatorId: (state, id) => {
+      state.systemInfo.activeOperatorId = id;
     },
     setActiveChatId: (state, id) => {
       let lastOpenDt = moment().format()

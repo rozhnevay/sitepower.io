@@ -25,14 +25,14 @@
       <div class="categories">
         <p class="title">Setup categorie</p>
         <div class="colors">
-          <div :class="[ chat.class=='white' ? 'active' : '' ]" @click="setClass('white')" class="color color-white"></div>
-          <div :class="[ chat.class=='green' ? 'active' : '' ]" @click="setClass('green')" class="color color-green"></div>
-          <div :class="[ chat.class=='blue' ? 'active' : '' ]" @click="setClass('blue')" class="color color-blue"></div>
-          <div :class="[ chat.class=='red' ? 'active' : '' ]" @click="setClass('red')" class="color color-red"></div>
-          <div :class="[ chat.class=='pink' ? 'active' : '' ]" @click="setClass('pink')" class="color color-pink"></div>
-          <div :class="[ chat.class=='orange' ? 'active' : '' ]" @click="setClass('orange')" class="color color-orange"></div>
-          <div :class="[ chat.class=='purple' ? 'active' : '' ]" @click="setClass('purple')" class="color color-purple"></div>
-          <div :class="[ chat.class=='black' ? 'active' : '' ]" @click="setClass('black')" class="color color-black"></div>
+          <div :class="[ chat.class==='white' ? 'active' : '' ]" @click="setClass('white')" class="color color-white"></div>
+          <div :class="[ chat.class==='green' ? 'active' : '' ]" @click="setClass('green')" class="color color-green"></div>
+          <div :class="[ chat.class==='blue' ? 'active' : '' ]" @click="setClass('blue')" class="color color-blue"></div>
+          <div :class="[ chat.class==='red' ? 'active' : '' ]" @click="setClass('red')" class="color color-red"></div>
+          <div :class="[ chat.class==='pink' ? 'active' : '' ]" @click="setClass('pink')" class="color color-pink"></div>
+          <div :class="[ chat.class==='orange' ? 'active' : '' ]" @click="setClass('orange')" class="color color-orange"></div>
+          <div :class="[ chat.class==='purple' ? 'active' : '' ]" @click="setClass('purple')" class="color color-purple"></div>
+          <div :class="[ chat.class==='black' ? 'active' : '' ]" @click="setClass('black')" class="color color-black"></div>
         </div>
       </div>
     </div>

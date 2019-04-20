@@ -6,9 +6,9 @@
       </div>
       <div class="menu">
         <ul>
-          <li :class="[ activeComponent == 'Chat' ?  'active' : '' ]" @click="chatOpen"><a href="#">Chats <span v-if="count > 0" class="badge badge-warning">{{count}}</span></a></li>
-          <li :class="[ activeComponent == 'Pref' ?  'active' : '' ]" @click="prefOpen"><a href="#">Administration</a></li>
-          <li :class="[ activeComponent == 'Pay' ?  'active' : '' ]"><a href="#">Payments <span class="badge badge-warning">{{account.balance}}</span></a></li>
+          <li :class="[ activeComponent == 'Chat' ?  'active' : '' ]"><router-link to="/chat">Chat</router-link></li>
+          <li :class="[ activeComponent == 'Administration' ?  'active' : '' ]"><router-link to="/admin">Administration</router-link></li>
+          <li :class="[ activeComponent == 'Pay' ?  'active' : '' ]"><router-link to="/pay">Payments <span class="badge badge-warning">{{account.balance}}</span></router-link></li>
         </ul>
       </div>
         <div class="btn-group">
@@ -16,8 +16,8 @@
             {{ getUserName }}
           </button>
           <div class="dropdown-menu dropdown-menu-right">
-            <button class="dropdown-item" type="button" @click="chatOpen">Chats</button>
-            <button class="dropdown-item" type="button" @click="prefOpen">Administration</button>
+            <button class="dropdown-item" type="button"><router-link to="/chat">Chats</router-link></button>
+            <button class="dropdown-item" type="button"><router-link to="/admin">Administration</router-link></button>
             <button class="dropdown-item" type="button">Payments <span class="badge badge-warning">55$</span></button>
             <div class="dropdown-divider"></div>
             <button class="dropdown-item" @click="logout">{{ logoutLabel }}</button>
@@ -47,37 +47,26 @@
         console.log(res);
         this.$store.commit('isUserLoggedIn', true);
         this.$store.commit('setUserName', res.data.user.name);
-        this.$store.commit('privateOpen', 'Chat');
-        this.isDataLoaded = true;
       }).catch((err) => {
         this.$store.commit('isUserLoggedIn', false);
         this.$store.commit('setUserName', "");
-        this.isDataLoaded = true;
       })
 
     },
     methods : {
-      chatOpen () {
+      /*chatOpen () {
         this.$store.commit('privateOpen', 'Chat');
       },
-      prefOpen() {
-        this.$store.commit('privateOpen', 'Pref');
-      },
+      adminOpen() {
+        this.$store.commit('privateOpen', 'Administration');
+      },*/
       logout () {
         axios.get("/api/logout").then((res) => {
           this.$store.commit('isUserLoggedIn', false);
           this.$store.commit('isUserSignedUp', false);
-          this.$router.push({ name: 'homepage-component' });
-
+          this.$router.push({ name: 'Public' });
         });
-
       },
-      chatOpen () {
-        this.$store.commit('privateOpen', 'Chat');
-      },
-      prefOpen() {
-        this.$store.commit('privateOpen', 'Pref');
-      }
     },
     computed: {
       isUserLoggedIn () {
@@ -92,7 +81,7 @@
         return this.$store.getters.getUserName;
       },
       activeComponent() {
-        return this.$store.getters.privateOpen
+        return this.$route.name;
       }
     },
 

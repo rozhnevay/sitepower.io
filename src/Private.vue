@@ -2,7 +2,7 @@
   <div>
     <div v-if="isUserLoggedIn" id="private">
         <header-component></header-component>
-        <body-component></body-component>
+        <router-view></router-view>
     </div>
     <div v-else>
       <h1>You are not authorized!</h1>
@@ -12,16 +12,10 @@
 
 <script>
   import Header from './components/Private/Header';
-  import Body from './components/Private/Body';
-
-
-
-
   export default {
     name: 'Private',
     components: {
-      'header-component': Header,
-      'body-component': Body
+      'header-component': Header
     },
     computed: {
       isUserLoggedIn () {

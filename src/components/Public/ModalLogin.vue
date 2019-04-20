@@ -75,7 +75,9 @@
             this.$store.commit('isUserLoggedIn', true);
             this.loginError = "";
             this.$store.commit('setUserName', res.data.name);
+
             this.close();
+            this.$router.push({ name: 'Chat' });
             console.log(res);
 
           }).catch((err)=>{
