@@ -11,7 +11,7 @@ import Home from '../components/Public/Home';
 import Login from '../components/Public/Login';
 import Registration from '../components/Public/Registration';
 import PasswordReset from '../components/Public/PasswordReset';
-
+import NotFound from '../components/Public/NotFound';
 
 
 Vue.use(Router)
@@ -55,6 +55,8 @@ export default new Router({
         }
       ]
     },
+    { path: '/404', component: NotFound },
+    { path: '*', redirect: '/404' },
 
   ]
 })

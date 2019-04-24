@@ -13,7 +13,7 @@
               <form @submit="checkForm" action="#" method="POST">
                 <div class="form-group">
                   <label for="name">Ваше имя</label>
-                  <input type="text" class="form-control" required id="name" placeholder="Ivan Orlov" v-model="name">
+                  <input type="text" class="form-control" required id="name" placeholder="Иван Орлов" v-model="name">
                 </div>
                 <div class="form-group">
                   <label for="email">Адрес электронной почты</label>
@@ -21,11 +21,11 @@
                 </div>
                 <div class="form-group">
                   <label for="password">Пароль</label>
-                  <input type="password" class="form-control" required id="password" placeholder="Enter your password" v-model="password">
+                  <input type="password" class="form-control" required id="password" placeholder="" v-model="password">
                 </div>
                 <div class="form-group mb-0">
                   <label for="re-password">Повторите пароль</label>
-                  <input type="password" class="form-control" required id="re-password" placeholder="Repeat your password" v-model="repeatPassword">
+                  <input type="password" class="form-control" required id="re-password" placeholder="" v-model="repeatPassword">
                 </div>
                 <button class="btn btn-black mt-20 w-100">Зарегистрироваться</button>
                 <div v-if="signupError" class="level"><p class="text-danger">{{ signupError }}</p></div>
@@ -72,7 +72,7 @@ export default {
             this.$store.commit('isUserSignedUp', true);
             this.$store.commit('isUserLoggedIn', true);
             this.signupError = "";
-            this.close();
+            this.$router.push({ name: 'Chat' });
           }).catch((err) => {
             this.signupError = "Ошибка при регистрации!";
             console.log(err.response);

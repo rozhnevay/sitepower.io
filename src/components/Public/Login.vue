@@ -17,7 +17,7 @@
                 </div>
                 <div class="form-group mb-0">
                   <label for="password">Пароль</label>
-                  <input type="password" class="form-control" required id="password" placeholder="Enter password" v-model="password">
+                  <input type="password" class="form-control" required id="password" placeholder="" v-model="password">
                 </div>
                 <router-link class="md-fp" to="/reset">Забыли пароль?</router-link>
                 <button class="btn btn-black w-100" >Вход</button>

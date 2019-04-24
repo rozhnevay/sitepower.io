@@ -54,7 +54,7 @@
         if (this.email) {
 
           this.reset(this.email).then((res) => {
-            this.close();
+            this.$router.push({ name: 'Home' });
             console.log("success");
           }).catch((err)=>{
             this.resetError = "Ошибка";
