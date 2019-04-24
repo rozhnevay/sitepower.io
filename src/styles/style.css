@@ -589,7 +589,17 @@
   background-color: black;
 }
 
+/* MODAL NEW ADD */
+.modal-show .modal {
+  display: block;
+  position: relative;
+}
+/* MODAL NEW ADD END */
+
 @media (max-width: 1000px) {
+  .modal-login {
+    width: auto;
+  }
   .mobile-message {
     display: block;
   }
@@ -712,9 +722,7 @@
   background-color: #A0A0A0;
   border-radius: 10px;
 }
-.modal-login {
-  width: 382px;
-}
+
 .btn-black {
   background-color: black;
   color:white;

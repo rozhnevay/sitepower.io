@@ -13,8 +13,11 @@ export default new Vuex.Store({
     },
     systemInfo: {
       chats : [],
+      chatsStatus : "",
+      chatsError : "",
       forms: [],
       operators : [],
+      messages: [],
       activeFormId: "",
       activeChatId: "",
       activeOperatorId:"",
@@ -52,7 +55,10 @@ export default new Vuex.Store({
     },
     getActiveChatPrintingTm: state => {
       return state.systemInfo.activeChatPrintingTm;
-    }
+    },
+    getMessages: state => {
+      return state.systemInfo.messages;
+    },
 
   },
   mutations: {
@@ -92,13 +98,14 @@ export default new Vuex.Store({
       state.systemInfo.activeOperatorId = id;
     },
     setActiveChatId: (state, id) => {
-      let lastOpenDt = moment().format()
-      state.systemInfo.chats.filter(item => item.sitepower_id === state.systemInfo.activeChatId)[0].lastOpenDt = lastOpenDt;
+      //let lastOpenDt = moment().format()
+      //state.systemInfo.chats.filter(item => item.sitepower_id === state.systemInfo.activeChatId)[0].lastOpenDt = lastOpenDt;
       state.systemInfo.activeChatId = id;
       state.systemInfo.activeChatPrintingTm = "";
-        axios.post("/api/chat/" + state.systemInfo.activeChatId, {lastOpenDt:lastOpenDt}).then((res) => {
+      state.systemInfo.messages = [];
+      /*axios.post("/api/chat/" + state.systemInfo.activeChatId, {lastOpenDt:lastOpenDt}).then((res) => {
         console.log("lastUpd SUCCESS")
-      }).catch(err => console.log(err.message))
+      }).catch(err => console.log(err.message))*/
     },
     setActiveChatCategory: (state, cat) => {
       state.systemInfo.chats.filter(item => item.sitepower_id === state.systemInfo.activeChatId)[0].class = cat;
@@ -183,11 +190,40 @@ export default new Vuex.Store({
       if (msg.sender_id === state.systemInfo.activeChatId) {
         state.systemInfo.activeChatPrintingTm = msg.created;
       }
-    }
+    },
+    CHATS_STATUS:   (state, status, error) => {
+      state.systemInfo.chatsStatus = status;
+      state.systemInfo.chatsError = error;
+    },
+    CHATS: (state, chats) => state.systemInfo.chats = chats,
+    MESSAGES_STATUS:   (state, status, error) => {
+      state.systemInfo.chatsStatus = status;
+      state.systemInfo.chatsError = error;
+    },
+    MESSAGES: (state, messages) => state.systemInfo.messages = messages
   },
 
   actions: {
-
+    CHATS_REQUEST: ({commit, state, dispatch}, props) => {
+      commit('CHATS_STATUS', "Loading");
+      axios.get("/api/chats")
+        .then(res => {
+          commit('CHATS_STATUS', "Success");
+          commit('CHATS', res.data);
+        }).catch(err => {
+        commit('CHATS_STATUS', "Error", err.message);
+      })
+    },
+    MESSAGES_REQUEST: ({commit, state, dispatch}, props) => {
+      commit('MESSAGES_STATUS', "Loading");
+      axios.get("/api/chat/" + state.systemInfo.activeChatId)
+        .then(res => {
+          commit('MESSAGES_STATUS', "Success");
+          commit('MESSAGES', res.data);
+        }).catch(err => {
+        commit('MESSAGES_STATUS', "Error", err.message);
+      })
+    },
   }
 });
 

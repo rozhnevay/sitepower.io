@@ -9,7 +9,7 @@
     <div class="overflow-auto">
       <div class="information">
         <span class="title">Information</span>
-        <p class="items">Region: Moscow</p>
+        <!--<p class="items">Region: Moscow</p>-->
         <p class="items" v-if="chat.login">Email: {{chat.login}}</p>
         <p class="items" v-if="chat.phone">Phone: {{chat.phone}}</p>
         <hr>

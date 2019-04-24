@@ -6,9 +6,9 @@
       </div>
       <div class="menu">
         <ul>
-          <li :class="[ activeComponent == 'Chat' ?  'active' : '' ]"><router-link to="/chat">Chat</router-link></li>
-          <li :class="[ activeComponent == 'Administration' ?  'active' : '' ]"><router-link to="/admin">Administration</router-link></li>
-          <li :class="[ activeComponent == 'Pay' ?  'active' : '' ]"><router-link to="/pay">Payments <span class="badge badge-warning">{{account.balance}}</span></router-link></li>
+          <li :class="[ activeComponent == 'Chat' ?  'active' : '' ]"><router-link to="chat">Chat</router-link></li>
+          <li :class="[ activeComponent == 'Administration' ?  'active' : '' ]"><router-link to="admin">Administration</router-link></li>
+          <!--<li :class="[ activeComponent == 'Pay' ?  'active' : '' ]"><router-link to="/pay">Payments <span class="badge badge-warning">{{account.balance}}</span></router-link></li>-->
         </ul>
       </div>
         <div class="btn-group">
@@ -18,7 +18,7 @@
           <div class="dropdown-menu dropdown-menu-right">
             <button class="dropdown-item" type="button"><router-link to="/chat">Chats</router-link></button>
             <button class="dropdown-item" type="button"><router-link to="/admin">Administration</router-link></button>
-            <button class="dropdown-item" type="button">Payments <span class="badge badge-warning">55$</span></button>
+            <!--<button class="dropdown-item" type="button">Payments <span class="badge badge-warning">55$</span></button>-->
             <div class="dropdown-divider"></div>
             <button class="dropdown-item" @click="logout">{{ logoutLabel }}</button>
           </div>
@@ -64,7 +64,7 @@
         axios.get("/api/logout").then((res) => {
           this.$store.commit('isUserLoggedIn', false);
           this.$store.commit('isUserSignedUp', false);
-          this.$router.push({ name: 'Public' });
+          this.$router.push({ name: 'Home' });
         });
       },
     },

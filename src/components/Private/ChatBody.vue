@@ -12,7 +12,7 @@
         </div>
         <div :class="[ msg.direction == 'from_user' ?  'admin' : 'client' ]">
           <span v-if="msg.direction == 'to_user' && msg.link==''" class="msg">{{msg.body}}</span>
-          <span class="time">{{msg.created | moment("HH:mm:ss")}}</span>
+          <div class="time">{{msg.created | moment("HH:mm:ss")}}</div>
           <!--<span class="time">{{msg.created |moment('calendar', null, { sameDay: 'HH:mm:ss',  lastWeek: 'DD.MM HH:mm:ss', sameElse: 'DD.MM HH:mm:ss'})}}</span>-->
 
           <span v-if="msg.direction == 'from_user' && msg.type=='text'" class="msg">{{msg.body}}</span>
@@ -105,6 +105,11 @@
       }
     },
     mounted() {
+      let that = this;
+      this.$root.$on('chat_open', function () {
+        this.$store.dispatch('MESSAGES_REQUEST', {/*тип запроса*/});
+      });
+
       Vue.use(new VueSocketIO({
         debug: true,
         connection: SocketIO('http://localhost:3031/', {path:'/socket.io'}),
@@ -187,9 +192,10 @@
            jquery(".item").first().addClass("selected");
          }
 
-         let f = this.$store.getters.getChats.filter(item => item.sitepower_id == this.getId);
+         /*let f = this.$store.getters.getChats.filter(item => item.sitepower_id == this.getId);
          if (f && f[0] && f[0].messages)
-         return f[0].messages;
+         return f[0].messages;*/
+         return this.$store.getters.getMessages;
       },
       getChatOpenDt () {
         let chat = this.$store.getters.getChats.filter(item => item.sitepower_id == this.getId)

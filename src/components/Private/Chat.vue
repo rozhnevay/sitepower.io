@@ -33,16 +33,16 @@
                     {{chat.name}}
                   </span>
                 <div class="message">
-                    {{chat.lastMessage().body}}
+                    {{chat.last_msg_body}}
                 </div>
               </div>
 
             </div>
             <div class="status">
               <!--<span v-if="chat.sitepower_id === activeChatId" class="badge badge-light">NOW </span>-->
-              <span v-if="chat.countUnread() > 0" class="badge badge-danger">UNREAD <span  class="badge badge-light">{{chat.countUnread()}}</span></span>
+              <span v-if="chat.cnt_unanswered > 0" class="badge badge-danger">UNREAD <span  class="badge badge-light">{{chat.cnt_unanswered}}</span></span>
               <!--<small class="text-muted">{{chat.lastMessage().created | moment("HH:mm")}}</small>-->
-              <small class="text-muted">{{chat.lastMessage().created | moment('calendar', null, { sameDay: 'HH:mm', lastDay : 'DD.MM.YYYY HH:mm', lastWeek: 'DD.MM.YYYY HH:mm', sameElse: 'DD.MM.YYYY HH:mm'})}}</small>
+              <small class="text-muted">{{chat.last_msg_created | moment('calendar', null, { sameDay: 'HH:mm', lastDay : 'DD.MM.YYYY HH:mm', lastWeek: 'DD.MM.YYYY HH:mm', sameElse: 'DD.MM.YYYY HH:mm'})}}</small>
             </div>
           </div>
 
@@ -64,7 +64,9 @@
   export default {
     name: 'Chat',
     mounted() {
-      axios.get("/api/chats").then((res) => {
+      this.$store.dispatch('CHATS_REQUEST', {/*тип запроса*/});
+
+      /* axios.get("/api/chats").then((res) => {
         let chats = res.data;
 
         chats.map(item => {
@@ -95,11 +97,12 @@
       }).catch((err) => {
         console.log("Error in getting chats: ", err.message)
       })
-
+*/
     },
     methods: {
       openChat(chat) {
         this.$store.commit('setActiveChatId', chat.sitepower_id);
+        this.$root.$emit("chat_open");
       },
       getChatClass(chat) {
         return "color " + chat.class;

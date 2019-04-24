@@ -127,7 +127,7 @@
                 <label class="form-check-label" for='is_admin' value="Is Admin"/>
              </div>
            </td>
-           <td>{{operator.created*1000 | moment("DD.MM.YYYY HH:mm")}}</td>
+           <td>{{operator.created | moment("DD.MM.YYYY HH:mm")}}</td>
          </tr>
          </tbody>
        </table>

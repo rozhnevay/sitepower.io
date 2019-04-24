@@ -2,9 +2,16 @@
 
 import Vue from "vue"
 import Router from "vue-router"
-import App from '../App';
+
+import Private from '../Private';
 import Administration from '../components/Private/Administration';
 import Chat from '../components/Private/Chat';
+
+import Home from '../components/Public/Home';
+import Login from '../components/Public/Login';
+import Registration from '../components/Public/Registration';
+import PasswordReset from '../components/Public/PasswordReset';
+
 
 
 Vue.use(Router)
@@ -13,21 +20,41 @@ export default new Router({
   routes: [
     {
       path: "/",
-      name: 'App',
-      component: App,
-      props: false
+      name: 'Home',
+      component: Home,
     },
     {
-      path: "/admin",
-      name: 'Administration',
-      component: Administration,
-      props: false
+      path: "/login",
+      name: 'Login',
+      component: Login,
     },
     {
-      path: "/chat",
-      name: 'Chat',
-      component: Chat,
-      props: false
-    }
+      path: "/registration",
+      name: 'Registration',
+      component: Registration,
+    },
+    {
+      path: "/reset",
+      name: 'PasswordReset',
+      component: PasswordReset,
+    },
+    {
+      path: "/private",
+      name: 'Private',
+      component: Private,
+      children: [
+        {
+          path: "admin",
+          name: 'Administration',
+          component: Administration,
+        },
+        {
+          path: "chat",
+          name: 'Chat',
+          component: Chat,
+        }
+      ]
+    },
+
   ]
 })
