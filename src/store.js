@@ -8,8 +8,8 @@ export default new Vuex.Store({
   state: {
     userInfo: {
       isLoggedIn: false,
-      isSignedUp: false,
-      name: ''
+      name: '',
+      authStatus : ""
     },
     systemInfo: {
       chats : [],
@@ -26,14 +26,14 @@ export default new Vuex.Store({
   },
 
   getters: {
-    isUserLoggedIn: state => {
+    USER_LOGGED_IN: state => {
       return state.userInfo.isLoggedIn;
     },
-    isUserSignedUp: state => {
-      return state.userInfo.isSignedUp;
-    },
-    getUserName: state => {
+    USER_NAME: state => {
       return state.userInfo.name;
+    },
+    AUTH_STATUS: state => {
+      return state.userInfo.authStatus;
     },
     getChats: state => {
       return state.systemInfo.chats;
@@ -62,16 +62,16 @@ export default new Vuex.Store({
 
   },
   mutations: {
-    isUserLoggedIn: (state, isUserLoggedIn) => {
+    USER_LOGGED_IN: (state, isUserLoggedIn) => {
       state.userInfo.isLoggedIn = isUserLoggedIn;
     },
 
-    isUserSignedUp: (state, isSignedUp) => {
-      state.userInfo.isSignedUp = isSignedUp;
-    },
-
-    setUserName: (state, name) => {
+    USER_NAME: (state, name) => {
       state.userInfo.name = name;
+    },
+    AUTH_STATUS: (state, status, error) => {
+      state.userInfo.authStatus = status;
+      state.userInfo.authError = error;
     },
     initChats: (state, chats) => {
       state.systemInfo.chats = chats;
@@ -200,7 +200,7 @@ export default new Vuex.Store({
       state.systemInfo.chatsStatus = status;
       state.systemInfo.chatsError = error;
     },
-    MESSAGES: (state, messages) => state.systemInfo.messages = messages
+    MESSAGES: (state, messages) => state.systemInfo.messages = messages,
   },
 
   actions: {
@@ -223,6 +223,80 @@ export default new Vuex.Store({
         }).catch(err => {
         commit('MESSAGES_STATUS', "Error", err.message);
       })
+    },
+    AUTH_LOGIN: ({commit, state, dispatch}, props) => {
+      return new Promise((resolve, reject) => {
+        commit('AUTH_STATUS', "Loading");
+        axios.post("/api/login", props).then((res) => {
+          commit('AUTH_STATUS', "Success")
+          commit('USER_LOGGED_IN', true);
+          commit('USER_NAME', res.data.name);
+          resolve();
+        }).catch((err) => {
+          commit('AUTH_STATUS', "Error")
+          commit('USER_LOGGED_IN', false);
+          commit('USER_NAME', "");
+          reject(err);
+        });
+      });
+    },
+    AUTH_REGISTER: ({commit, state, dispatch}, props) => {
+      return new Promise((resolve, reject) => {
+        commit('AUTH_STATUS', "Loading");
+        axios.post("/api/register", props).then((res) => {
+          commit('AUTH_STATUS', "Success")
+          commit('USER_LOGGED_IN', true);
+          commit('USER_NAME', res.data.name);
+          resolve();
+        }).catch((err) => {
+          commit('AUTH_STATUS', "Error")
+          commit('USER_LOGGED_IN', false);
+          commit('USER_NAME', "");
+          reject(err);
+        });
+      });
+    },
+    AUTH_USER: ({commit, state, dispatch}, props) => {
+      return new Promise((resolve, reject) => {
+        commit('AUTH_STATUS', "Loading");
+        axios.get("/api/user").then((res) => {
+          commit('AUTH_STATUS', "Success")
+          commit('USER_LOGGED_IN', true);
+          commit('USER_NAME', res.data.user.name);
+          resolve();
+        }).catch((err) => {
+          commit('AUTH_STATUS', "Error")
+          commit('USER_LOGGED_IN', false);
+          commit('USER_NAME', "");
+          reject(err);
+        });
+      });
+    },
+    AUTH_LOGOUT: ({commit, state, dispatch}) => {
+      return new Promise((resolve, reject) => {
+        commit('AUTH_STATUS', "Loading");
+        axios.get("/api/logout").then((res) => {
+          commit('AUTH_STATUS', "Success")
+          commit('USER_LOGGED_IN', false);
+          commit('USER_NAME', "");
+          resolve();
+        }).catch((err) => {
+          commit('AUTH_STATUS', "Error")
+          reject(err);
+        });
+      });
+    },
+    AUTH_RESET: ({commit, state, dispatch}, props) => {
+      return new Promise((resolve, reject) => {
+        commit('AUTH_STATUS', "Loading");
+        axios.post("/api/reset", props).then((res) => {
+          commit('AUTH_STATUS', "Success")
+          resolve();
+        }).catch((err) => {
+          commit('AUTH_STATUS', "Error")
+          reject(err);
+        });
+      });
     },
   }
 });

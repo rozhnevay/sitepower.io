@@ -314,15 +314,9 @@
 
 <script>
 
-
-  import axios from "axios";
   export default {
     name: "home-component",
-    data () {
-      return {
-        isMenuOpen: false
-      }
-    },
+
     methods : {
       showLoginModal () {
         this.$router.push({ name: 'Login' });
@@ -330,28 +324,6 @@
       showSignupModal () {
         this.$router.push({ name: 'Registration' });
       }
-    },
-    beforeMount() {
-       // let jPM = $.jPanelMenu({
-       //   menu: '#custom-menu-selector',
-       //   trigger: '#mobile-menu-button',
-       //   direction: 'right',
-       //   excludedPanelContent: '.header.index',
-       // });
-       // jPM.on();
-
-      axios.get("/api/user").then((res) => {
-        console.log(res);
-        this.$store.commit('isUserLoggedIn', true);
-        this.$store.commit('setUserName', res.data.user.name);
-        this.$store.commit('privateOpen', 'Chat');
-        this.isDataLoaded = true;
-      }).catch((err) => {
-        this.$store.commit('isUserLoggedIn', false);
-        this.$store.commit('setUserName', "");
-        this.isDataLoaded = true;
-      })
-
     },
   }
 </script>

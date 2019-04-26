@@ -11,8 +11,18 @@ import Home from '../components/Public/Home';
 import Login from '../components/Public/Login';
 import Registration from '../components/Public/Registration';
 import PasswordReset from '../components/Public/PasswordReset';
+import PasswordResetSuccess from '../components/Public/PasswordResetSuccess';
 import NotFound from '../components/Public/NotFound';
 
+import store from '../store' // your vuex store
+
+const ifAuthenticated = (to, from, next) => {
+  if (store.getters.USER_LOGGED_IN) {
+    next()
+    return
+  }
+  next('/')
+}
 
 Vue.use(Router)
 export default new Router({
@@ -39,6 +49,11 @@ export default new Router({
       component: PasswordReset,
     },
     {
+      path: "/resetsuccess",
+      name: 'PasswordResetSuccess',
+      component: PasswordResetSuccess,
+    },
+    {
       path: "/private",
       name: 'Private',
       component: Private,
@@ -53,7 +68,8 @@ export default new Router({
           name: 'Chat',
           component: Chat,
         }
-      ]
+      ],
+      beforeEnter: ifAuthenticated
     },
     { path: '/404', component: NotFound },
     { path: '*', redirect: '/404' },

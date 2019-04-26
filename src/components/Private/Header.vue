@@ -20,7 +20,7 @@
             <button class="dropdown-item" type="button"><router-link to="/admin">Administration</router-link></button>
             <!--<button class="dropdown-item" type="button">Payments <span class="badge badge-warning">55$</span></button>-->
             <div class="dropdown-divider"></div>
-            <button class="dropdown-item" @click="logout">{{ logoutLabel }}</button>
+            <button class="dropdown-item" @click="logout">Выход</button>
           </div>
         </div>
 
@@ -29,56 +29,26 @@
 </template>
 
 <script>
-  import axios from "axios";
   export default {
     name: "private-header-component",
-    data () {
-      return {
-        isMenuOpen: false,
-        logoutLabel: 'Log out',
-        account:{
-          balance : "15$"
-        }
-      }
-    },
-    beforeMount() {
 
-      axios.get("/api/user").then((res) => {
-        console.log(res);
-        this.$store.commit('isUserLoggedIn', true);
-        this.$store.commit('setUserName', res.data.user.name);
-      }).catch((err) => {
-        this.$store.commit('isUserLoggedIn', false);
-        this.$store.commit('setUserName', "");
-      })
-
-    },
     methods : {
-      /*chatOpen () {
-        this.$store.commit('privateOpen', 'Chat');
-      },
-      adminOpen() {
-        this.$store.commit('privateOpen', 'Administration');
-      },*/
       logout () {
-        axios.get("/api/logout").then((res) => {
-          this.$store.commit('isUserLoggedIn', false);
-          this.$store.commit('isUserSignedUp', false);
-          this.$router.push({ name: 'Home' });
-        });
+        this.$store.dispatch('AUTH_LOGOUT')
+          .then(() => this.$router.push({ name: 'Home' }))
+          .catch(err => {
+            console.log(err.message);
+          });
       },
     },
     computed: {
-      isUserLoggedIn () {
-        return this.$store.getters.isUserLoggedIn;
-      },
       count () {
         let cnt = 0;
         this.$store.getters.getChats.forEach(item => {cnt = parseInt(item.countUnread(), 10) + cnt});
         return cnt;
       },
       getUserName () {
-        return this.$store.getters.getUserName;
+        return this.$store.getters.USER_NAME;
       },
       activeComponent() {
         return this.$route.name;

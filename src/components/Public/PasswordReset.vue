@@ -27,10 +27,7 @@
   </div>
 </template>
 
-<script>
-  import axios from "axios";
-
-  export default {
+<script>export default {
     name: 'reset-component',
 
     data () {
@@ -41,26 +38,13 @@
     },
 
     methods: {
-
-      reset: (email) => {
-        let data = {
-          email: email
-        }
-        return axios.post("/api/reset", data)
-      },
       checkForm (e) {
         e.preventDefault();
-
-        if (this.email) {
-
-          this.reset(this.email).then((res) => {
-            this.$router.push({ name: 'Home' });
-            console.log("success");
-          }).catch((err)=>{
-            this.resetError = "Ошибка";
-            console.log(err);
-          })
-        }
+        this.$store.dispatch('AUTH_RESET', {email: this.email})
+          .then(() => this.$router.push({name: 'PasswordResetSuccess'}))
+          .catch(err => {
+            this.resetError = (err.response && err.response.status == "400") ? "Пользователь с таким email не найден" : "Ошибка сервера"
+          });
       },
     }
   };

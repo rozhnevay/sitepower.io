@@ -8,7 +8,6 @@
             <div class="md-header">
               <img src="../../assets/logo-black.svg" width="235px" height="48px" alt="">
             </div>
-
             <div class="md-main">
               <form @submit="checkForm" action="#" method="POST">
                 <div class="form-group">
@@ -23,11 +22,8 @@
                 <button class="btn btn-black w-100" >Вход</button>
                 <router-link class="md-su" to="/registration">Зарегистрироваться!</router-link>
                 <div v-if="loginError" class="level"><p class="text-danger">{{ loginError }}</p></div>
-
               </form>
-
             </div>
-
           </div>
         </div>
       </div>
@@ -36,7 +32,7 @@
 </template>
 
 <script>
-  import axios from "axios";
+
 
   export default {
     name: 'login-component',
@@ -45,41 +41,17 @@
       return {
         email : '',
         password : '',
-        loginError : ''
+        loginError: ''
       };
     },
-
-    computed: {
-      isUserLoggedIn () {
-        return this.$store.getters.isUserLoggedIn;
-      },
-    },
-
     methods: {
-      login: (email, password) => {
-        let data = {
-            email: email,
-            password: password
-        }
-        return axios.post("/api/login", data)
-      },
       checkForm (e) {
         e.preventDefault();
-
-        if (this.email && this.password) {
-          this.login(this.email, this.password).then((res) => {
-            this.$store.commit('isUserLoggedIn', true);
-            this.loginError = "";
-            this.$store.commit('setUserName', res.data.name);
-            this.$router.push({ name: 'Chat' });
-            console.log(res);
-          }).catch((err)=>{
-            this.$store.commit('isUserLoggedIn', false);
-            console.log(err);
-            this.loginError = "Неверное имя пользователя или пароль";
-          })
-
-        }
+        this.$store.dispatch('AUTH_LOGIN', {email: this.email, password: this.password})
+          .then(() => this.$router.push({name: 'Chat'}))
+          .catch(err => {
+            this.loginError = (err.response && err.response.status == "400") ? "Неверное имя пользователя или пароль" : "Ошибка сервера"
+          });
       },
     }
   };
