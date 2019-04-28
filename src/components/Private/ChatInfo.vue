@@ -2,28 +2,29 @@
   <div v-if="getId.length > 0" class="right-side">
     <div  class="top">
       <span class="name">{{chat.name}}</span>
-      <p class="desc">First appeal on</p>
+      <p class="desc">Дата первого обращения</p>
       <span class="date">{{chat.created | moment("DD.MM.YYYY HH:mm")}}</span>
       <hr>
     </div>
     <div class="overflow-auto">
       <div class="information">
-        <span class="title">Information</span>
+        <span class="title">Информация</span>
         <!--<p class="items">Region: Moscow</p>-->
         <p class="items" v-if="chat.login">Email: {{chat.login}}</p>
-        <p class="items" v-if="chat.phone">Phone: {{chat.phone}}</p>
+        <p class="items" v-if="chat.phone">Телефон: {{chat.phone}}</p>
         <hr>
       </div>
       <div class="actions">
-        <span class="title">Actions</span>
+        <span class="title">Действия</span>
         <div class="buttons">
-          <button class="btn btn-red" @click="setSpam">Add to spam</button>
-          <!--<button class="btn btn-blue">Send dialog via Email</button>-->
-          <button class="btn btn-blue" data-target="#chatinfo" data-toggle="modal" @click="showChatInfoModal">Add contact information</button>
+
+          <button class="btn btn-blue">Отправить диалог на email</button>
+          <button class="btn btn-blue" data-target="#chatinfo" data-toggle="modal" @click="showChatInfoModal">Добавить контакты</button>
+          <button class="btn btn-red" @click="setSpam">В спам!</button>
         </div>
       </div>
       <div class="categories">
-        <p class="title">Setup categorie</p>
+        <p class="title">Установить категорию</p>
         <div class="colors">
           <div :class="[ chat.class==='white' ? 'active' : '' ]" @click="setClass('white')" class="color color-white"></div>
           <div :class="[ chat.class==='green' ? 'active' : '' ]" @click="setClass('green')" class="color color-green"></div>
@@ -42,20 +43,19 @@
 </template>
 
 <script>
-  import axios from "axios";
-  import * as jquery from 'jquery'
   import ChatInfoModal from './ModalChatInfo';
   export default {
     name: 'ChatInfo',
     methods :{
       setClass(name){
-        this.$store.commit('setActiveChatCategory', name);
+        this.$store.dispatch('SET_ACTIVE_CHAT_CATEGORY', name).then().catch(err => console.log(err)); /* TODO - заглушка*/
       },
       setSpam() {
-        this.$store.commit('setActiveChatSpam');
+        this.$store.dispatch('SET_ACTIVE_CHAT_SPAM').then().catch(err => console.log(err)); /* TODO - заглушка*/
       },
       showChatInfoModal () {
         this.$root.$emit("chatinfo_open", this.chat);
+
       }
 
 
@@ -65,11 +65,7 @@
         return this.$store.getters.getActiveChatId;
       },
       chat () {
-        let chat = this.$store.getters.getChats.filter(item => item.sitepower_id == this.getId);
-        if (chat && chat[0] && chat[0].name) {
-          return chat[0];
-        }
-        return null;
+        return this.$store.getters.getChats[this.getId];
       }
     },
     components : {

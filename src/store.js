@@ -1,8 +1,11 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import router from './router/index'
+
+
 
 Vue.use(Vuex);
-import moment from 'moment';
+
 import axios from "axios";
 export default new Vuex.Store({
   state: {
@@ -20,6 +23,7 @@ export default new Vuex.Store({
       messages: [],
       activeFormId: "",
       activeChatId: "",
+      activeCategory: "",
       activeOperatorId:"",
       activeChatPrintingTm: ""
     }
@@ -97,61 +101,63 @@ export default new Vuex.Store({
     setActiveOperatorId: (state, id) => {
       state.systemInfo.activeOperatorId = id;
     },
-    setActiveChatId: (state, id) => {
-      //let lastOpenDt = moment().format()
-      //state.systemInfo.chats.filter(item => item.sitepower_id === state.systemInfo.activeChatId)[0].lastOpenDt = lastOpenDt;
-      state.systemInfo.activeChatId = id;
-      state.systemInfo.activeChatPrintingTm = "";
-      state.systemInfo.messages = [];
-      /*axios.post("/api/chat/" + state.systemInfo.activeChatId, {lastOpenDt:lastOpenDt}).then((res) => {
-        console.log("lastUpd SUCCESS")
-      }).catch(err => console.log(err.message))*/
-    },
-    setActiveChatCategory: (state, cat) => {
-      state.systemInfo.chats.filter(item => item.sitepower_id === state.systemInfo.activeChatId)[0].class = cat;
 
-      axios.post("/api/chat/" + state.systemInfo.activeChatId, {class:cat}).then((res) => {
-      }).catch(err => console.log(err.message))
+    ACTIVE_CHAT_CATEGORY: (state, cat) => {
+      state.systemInfo.chats[state.systemInfo.activeChatId].class = cat;
+    },
+    ACTIVE_CHAT_SPAM: (state) => {
+      delete state.systemInfo.chats[state.systemInfo.activeChatId];
 
     },
-    setActiveChatSpam: (state) => {
-      axios.post("/api/chat/" + state.systemInfo.activeChatId, {class:"SPAM"}).then((res) => {
-      }).catch(err => console.log(err.message))
-
-      state.systemInfo.chats = state.systemInfo.chats.filter(item => item.sitepower_id !== state.systemInfo.activeChatId);
-      if (state.systemInfo.chats.length > 0)
-        state.systemInfo.activeChatId = state.systemInfo.chats[0].sitepower_id
-      else
-        state.systemInfo.activeChatId = "";
-    },
-    setActiveChatContact: (state, item) => {
-      state.systemInfo.chats.filter(item => item.sitepower_id === state.systemInfo.activeChatId)[0].name = item.name;
-      state.systemInfo.chats.filter(item => item.sitepower_id === state.systemInfo.activeChatId)[0].login = item.login;
-      state.systemInfo.chats.filter(item => item.sitepower_id === state.systemInfo.activeChatId)[0].phone = item.phone;
-
-      axios.post("/api/chat/" + state.systemInfo.activeChatId, {name:item.name, login:item.login, phone:item.phone}).then((res) => {
-      }).catch(err => console.log(err.message))
+    ACTIVE_CHAT_CONTACT: (state, item) => {
+      state.systemInfo.chats[state.systemInfo.activeChatId].name = item.name;
+      state.systemInfo.chats[state.systemInfo.activeChatId].login = item.login;
+      state.systemInfo.chats[state.systemInfo.activeChatId].phone = item.phone;
     },
     setActiveChatPrintingTm: (state, val) => {
       state.systemInfo.activeChatPrintingTm = val;
     },
-    socket_receive: (state, msg) => {
+    socket_receive: (state, receive_msg) => {
+      const msg = receive_msg.msg;
+      const chat = receive_msg.chat;
+      if (!msg || !chat) return;
       console.log("receive");
+      console.log(receive_msg);
       console.log(msg);
-      let chatObj, chatId;
-      console.log("hhh");
-      if (msg.direction == "to_user") {
-        chatId = msg.sender_id;
-      } else {
-        chatId = msg.recepient_id;
+      console.log(chat);
+
+      let chatItem, chatId;
+      chatId = msg.direction === "to_user" ? msg.sender_id : msg.recepient_id;
+      chatItem = state.systemInfo.chats[chatId];
+      // 1. Такой чат - уже есть
+      if (chatItem) {
+        // 1. Если это активный чат - пушаем в него сообщение
+        chatId === state.systemInfo.activeChatId ? state.systemInfo.messages.push(msg) : null;
+        // 2. Обновляем состояние чата
+        let res = Object.assign(state.systemInfo.chats[chatId], chat);
+        console.log(res);
       }
-      console.log("fff");
-      chatObj = state.systemInfo.chats.filter(item => item.sitepower_id == chatId);
-      let chatItem = chatObj[0];
-      console.log("chatItem = " + chatItem);
+      if (msg.direction === "to_user") {
+        if (Notification.permission === "granted") {
+          let notification = new Notification(chat.name, {body: msg.body});
+          notification.onclick = () => console.log("click");
+        }
+      }
+
+
+
+
+
+
+
+
+
+
+
+      /*console.log("chatItem = " + chatItem);
       if (!chatItem) {
         axios.get("/api/chat/" + chatId).then((item) => {
-          /* !!! TODO вынести в отдельный метод и реализовать через actions !!!*/
+
           item = item.data;
           item.lastMessage = () => {
             if (item.messages && item.messages.length) {
@@ -179,9 +185,8 @@ export default new Vuex.Store({
         }).catch(err => console.log(err.message))
       } else {
         chatItem.messages.push(msg);
-      }
-      //chatItem = chatItem ? chatItem : {};
-      //chatItem.messages = chatItem.messages ? chatItem.messages : [];
+      }*/
+
 
     },
     socket_print: (state, msg) => {
@@ -190,6 +195,13 @@ export default new Vuex.Store({
       if (msg.sender_id === state.systemInfo.activeChatId) {
         state.systemInfo.activeChatPrintingTm = msg.created;
       }
+    },
+    ACTIVE_CATEGORY: (state, category) => {
+
+    },
+    ACTIVE_CHAT_ID: (state, id) => {
+      state.systemInfo.activeChatId = id;
+      state.systemInfo.activeChatPrintingTm = "";
     },
     CHATS_STATUS:   (state, status, error) => {
       state.systemInfo.chatsStatus = status;
@@ -204,24 +216,34 @@ export default new Vuex.Store({
   },
 
   actions: {
-    CHATS_REQUEST: ({commit, state, dispatch}, props) => {
-      commit('CHATS_STATUS', "Loading");
-      axios.get("/api/chats")
-        .then(res => {
-          commit('CHATS_STATUS', "Success");
-          commit('CHATS', res.data);
-        }).catch(err => {
-        commit('CHATS_STATUS', "Error", err.message);
+    CHATS_REQUEST: ({commit}, props) => {
+      return new Promise((resolve, reject) => {
+        commit('CHATS_STATUS', "Loading");
+        axios.get("/api/chats")
+          .then(res => {
+            commit('CHATS_STATUS', "Success");
+            commit('CHATS', res.data);
+            resolve();
+
+            if (res.data && Object.keys(res.data)[0]) {
+              commit('ACTIVE_CHAT_ID', Object.keys(res.data)[0]);
+            }
+          }).catch(err => {
+          commit('CHATS_STATUS', "Error", err.message);
+          reject(err);
+        })
       })
     },
     MESSAGES_REQUEST: ({commit, state, dispatch}, props) => {
-      commit('MESSAGES_STATUS', "Loading");
-      axios.get("/api/chat/" + state.systemInfo.activeChatId)
-        .then(res => {
-          commit('MESSAGES_STATUS', "Success");
-          commit('MESSAGES', res.data);
-        }).catch(err => {
-        commit('MESSAGES_STATUS', "Error", err.message);
+      return new Promise((resolve, reject) => {
+        commit('MESSAGES_STATUS', "Loading");
+        axios.get("/api/chat/" + state.systemInfo.activeChatId)
+          .then(res => {
+            commit('MESSAGES_STATUS', "Success");
+            commit('MESSAGES', res.data);
+          }).catch(err => {
+          commit('MESSAGES_STATUS', "Error", err.message);
+        })
       })
     },
     AUTH_LOGIN: ({commit, state, dispatch}, props) => {
@@ -298,6 +320,49 @@ export default new Vuex.Store({
         });
       });
     },
+    SET_ACTIVE_CHAT_CATEGORY: ({commit, state, dispatch}, category) => {
+      return new Promise((resolve, reject) => {
+        axios.post("/api/chat/" + state.systemInfo.activeChatId, {class:category}).then((res) => {
+          commit('ACTIVE_CHAT_CATEGORY', category)
+          resolve();
+        }).catch((err) => {
+          reject(err);
+        });
+      });
+    },
+    SET_ACTIVE_CHAT_SPAM: ({commit, state, dispatch}) => {
+      return new Promise((resolve, reject) => {
+        axios.post("/api/chat/" + state.systemInfo.activeChatId, {class:"SPAM"}).then((res) => {
+          commit('ACTIVE_CHAT_SPAM')
+          if (state.systemInfo.chats && Object.keys(state.systemInfo.chats)[0]) {
+            commit('ACTIVE_CHAT_ID', Object.keys(state.systemInfo.chats)[0]);
+            dispatch('MESSAGES_REQUEST');
+          }
+          resolve();
+        }).catch((err) => {
+          reject(err);
+        });
+      });
+    },
+    SET_ACTIVE_CHAT_CONTACT: ({commit, state, dispatch}, item) => {
+      return new Promise((resolve, reject) => {
+        axios.post("/api/chat/" + state.systemInfo.activeChatId + "/contact", {name:item.name, login:item.login, phone:item.phone}).then((res) => {
+          commit('ACTIVE_CHAT_CONTACT', item)
+          resolve();
+        }).catch((err) => {
+          reject(err);
+        });
+      });
+    },
   }
+});
+
+axios.interceptors.response.use(response => {
+  return response;
+}, error => {
+  if (error.response.status === 401) {
+    router.push({name : 'Home'});
+  }
+  return Promise.reject(error);
 });
 

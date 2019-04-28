@@ -12,6 +12,7 @@
 
 <script>
   import Header from './components/Private/Header';
+
   export default {
     name: 'Private',
     components: {
@@ -21,6 +22,9 @@
       isUserLoggedIn () {
         return this.$store.getters.USER_LOGGED_IN;
       }
+    },
+    mounted (){
+      Notification.requestPermission();
     }
   }
 </script>

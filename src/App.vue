@@ -16,7 +16,7 @@ export default {
     this.$store.dispatch('AUTH_USER')
       .then(() => {
         this.isDataLoaded = true;
-        this.$router.push({name: 'Chat'})
+        this.$router.push({name: 'Chats'})
       })
       .catch(() => this.isDataLoaded = true);
   }

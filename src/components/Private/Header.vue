@@ -6,8 +6,8 @@
       </div>
       <div class="menu">
         <ul>
-          <li :class="[ activeComponent == 'Chat' ?  'active' : '' ]"><router-link to="chat">Chat</router-link></li>
-          <li :class="[ activeComponent == 'Administration' ?  'active' : '' ]"><router-link to="admin">Administration</router-link></li>
+          <li :class="[ activeComponent == 'Chats' ?  'active' : '' ]"><router-link to="chats">Диалоги</router-link></li>
+          <li :class="[ activeComponent == 'Administration' ?  'active' : '' ]"><router-link to="admin">Настройки</router-link></li>
           <!--<li :class="[ activeComponent == 'Pay' ?  'active' : '' ]"><router-link to="/pay">Payments <span class="badge badge-warning">{{account.balance}}</span></router-link></li>-->
         </ul>
       </div>
@@ -16,8 +16,8 @@
             {{ getUserName }}
           </button>
           <div class="dropdown-menu dropdown-menu-right">
-            <button class="dropdown-item" type="button"><router-link to="/chat">Chats</router-link></button>
-            <button class="dropdown-item" type="button"><router-link to="/admin">Administration</router-link></button>
+            <button class="dropdown-item" type="button"><router-link to="chats">Диалоги</router-link></button>
+            <button class="dropdown-item" type="button"><router-link to="admin">Настройки</router-link></button>
             <!--<button class="dropdown-item" type="button">Payments <span class="badge badge-warning">55$</span></button>-->
             <div class="dropdown-divider"></div>
             <button class="dropdown-item" @click="logout">Выход</button>
@@ -42,11 +42,6 @@
       },
     },
     computed: {
-      count () {
-        let cnt = 0;
-        this.$store.getters.getChats.forEach(item => {cnt = parseInt(item.countUnread(), 10) + cnt});
-        return cnt;
-      },
       getUserName () {
         return this.$store.getters.USER_NAME;
       },

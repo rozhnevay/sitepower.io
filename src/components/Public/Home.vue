@@ -3,7 +3,7 @@
     <div class="header">
       <div class="container">
         <div class="logo">
-          <a href=""><img src="../../assets/logo.svg" width="236px" height="48px" alt=""></a>
+          <a href="/"><img src="../../assets/logo.svg" width="236px" height="48px" alt=""></a>
         </div>
         <!--<nav id="jPanelMenu-menu">-->
           <!--<div class="jpanel-menu">-->
@@ -319,7 +319,12 @@
 
     methods : {
       showLoginModal () {
-        this.$router.push({ name: 'Login' });
+        this.$store.dispatch('AUTH_USER')
+          .then(() => {
+            this.$router.push({name: 'Chats'})
+          })
+          .catch(() => this.$router.push({ name: 'Login' }));
+
       },
       showSignupModal () {
         this.$router.push({ name: 'Registration' });

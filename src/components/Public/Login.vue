@@ -48,9 +48,9 @@
       checkForm (e) {
         e.preventDefault();
         this.$store.dispatch('AUTH_LOGIN', {email: this.email, password: this.password})
-          .then(() => this.$router.push({name: 'Chat'}))
+          .then(() => this.$router.push({name: 'Chats'}))
           .catch(err => {
-            this.loginError = (err.response && err.response.status == "400") ? "Неверное имя пользователя или пароль" : "Ошибка сервера"
+            this.loginError = (err.response && err.response.status === 400) ? "Неверное имя пользователя или пароль" : "Ошибка сервера"
           });
       },
     }

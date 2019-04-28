@@ -47,7 +47,7 @@
     methods: {
       checkForm (e) {
         e.preventDefault();
-        this.$store.commit("setActiveChatContact", {name:this.name, login:this.login, phone:this.phone});
+        this.$store.dispatch("SET_ACTIVE_CHAT_CONTACT", {name:this.name, login:this.login, phone:this.phone});
         jquery('#chatinfo').modal('hide');
         jquery('body').removeClass('modal-open');
         jquery('.modal-backdrop').remove();

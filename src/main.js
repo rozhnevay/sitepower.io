@@ -11,8 +11,9 @@ import './styles/style.css'
 import 'popper.js/dist/popper.min.js';
 import 'bootstrap/dist/js/bootstrap.min.js';
 import './js/custom.js'
+import VueMobileDetection from "vue-mobile-detection";
 
-
+Vue.use(VueMobileDetection);
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
@@ -23,3 +24,4 @@ new Vue({
   components: { App },
   template: '<App/>'
 })
+

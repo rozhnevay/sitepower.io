@@ -8,7 +8,10 @@
 
       <div v-for="(msg, index) in messages" >
         <div v-if="needNewSeparator(msg, index)" class="new-msg-separator">
-          New Messages
+          Неотвеченные сообщения
+        </div>
+        <div v-if="dateSeparator(msg, index)" class="new-msg-separator">
+          {{dateSeparator(msg, index)}}
         </div>
         <div :class="[ msg.direction == 'from_user' ?  'admin' : 'client' ]">
           <span v-if="msg.direction == 'to_user' && msg.link==''" class="msg">{{msg.body}}</span>
@@ -16,7 +19,7 @@
           <!--<span class="time">{{msg.created |moment('calendar', null, { sameDay: 'HH:mm:ss',  lastWeek: 'DD.MM HH:mm:ss', sameElse: 'DD.MM HH:mm:ss'})}}</span>-->
 
           <span v-if="msg.direction == 'from_user' && msg.type=='text'" class="msg">{{msg.body}}</span>
-          <a v-if="msg.direction == 'from_user' && msg.type=='link'" class="msg" :href="msg.link"><span  class="attachment badge badge-light"><i class="fas fa-file"></i>{{msg.body}}</span></a>
+          <a v-if="msg.direction == 'from_user' && msg.type=='link'" class="msg" :href="msg.link" target="_blank"><span  class="attachment badge badge-light"><i class="fas fa-file"></i>{{msg.body}}</span></a>
 
         </div>
 
@@ -34,7 +37,7 @@
     <div class="input">
 
       <div class="left">
-        <div class="pin-file">
+        <div class="pin-file" title="Прикрепить вложение">
           <input type="file" name="file[]" id="file" ref="file" v-on:change="handleFileUpload()" class="inputfile inputfile-5" hidden data-multiple-caption="{count} files selected" multiple />
           <label for="file"><img src="../../assets/files.svg" alt=""></label>
         </div>
@@ -70,11 +73,11 @@
           </div>
         </emoji-picker>
         <div class="msg">
-          <textarea maxlength="1000" placeholder="Enter your message" v-model="msg"></textarea>
+          <textarea maxlength="1000" placeholder="Введите сообщение..." v-model="msg"></textarea>
         </div>
       </div>
 
-      <div class="button" @click="submitForm">
+      <div class="button" @click="submitForm" title="Отправить сообщение">
         <img src="../../assets/send.svg" alt="">
       </div>
 
@@ -86,12 +89,11 @@
 <script>
   import Vue from 'vue';
   import axios from "axios";
-  import VueSocketIO from 'vue-socket.io';
-  import SocketIO from 'socket.io-client';
-  import store from '../../store';
+
+
   import autosize from 'autosize';
   Vue.use(require('vue-moment'));
-  import * as jquery from 'jquery'
+  import * as $ from 'jquery'
   import EmojiPicker from 'vue-emoji-picker'
   import customEmo from '../../js/custom-emo';
   import moment from 'moment';
@@ -110,17 +112,8 @@
         this.$store.dispatch('MESSAGES_REQUEST', {/*тип запроса*/});
       });
 
-      Vue.use(new VueSocketIO({
-        debug: true,
-        connection: SocketIO('http://localhost:3031/', {path:'/socket.io'}),
-        vuex: {
-          store,
-          actionPrefix: 'socket_',
-          mutationPrefix: 'socket_'
-        },
 
-      }))
-      autosize(jquery('.input .msg textarea'));
+      autosize($('.input .msg textarea'));
       let self = this;
       setInterval(() => {
         if (moment(self.$store.getters.getActiveChatPrintingTm).add(moment.duration(1, 'seconds')) < moment()){
@@ -129,11 +122,12 @@
       }, 1000)
      },
     updated() {
-      jquery(".messages").animate({ scrollTop: 99999 }, "fast");
+      $(".messages").scrollTop($(".messages").prop("scrollHeight"));
     },
     methods: {
 
       submitForm() {
+        if (!this.msg) return;
         let sendMessage = {};
 
         sendMessage.direction = "from_user";
@@ -142,21 +136,32 @@
         sendMessage.type = "text";
         this.$socket.emit("send", sendMessage);
         this.msg = "";
-        autosize(jquery('.input .msg textarea'));
+        autosize($('.input .msg textarea'));
       },
       append(emoji) {
         this.msg += emoji
         this.$el.querySelector(".input").click();
       },
       needNewSeparator(msg, index){
-        if (msg.direction === "to_user" && moment(msg.created) > moment(this.getChatOpenDt)){
-          if(this.messages[index-1] && moment(this.messages[index-1].created) <= moment(this.getChatOpenDt)) {
+        let userMessages = this.messages.filter(item => item.direction === "from_user")
+        let lastUserMsgId = userMessages[userMessages.length - 1] ? userMessages[userMessages.length - 1].id : 999999999;
+
+        if (msg.direction === "to_user" && parseInt(msg.id, 10) > parseInt(lastUserMsgId, 10)){
+          if(this.messages[index-1] && this.messages[index-1].id === lastUserMsgId) {
             return true;
           }
         }
         return false;
       },
-
+      dateSeparator(msg, index){
+        const prevMsg = this.messages[index-1]
+        const prevMsgDate = prevMsg ? moment(prevMsg.created, "YYYYMMDD") : moment("1970-01-01")
+        const msgDate = moment(msg.created, "YYYYMMDD")
+        if (msgDate > prevMsgDate){
+          return moment(msg.created).format("DD.MM.YYYY");
+        }
+        return;
+      },
       handleFileUpload() {
         let files = this.$refs.file.files;
         for (var i = 0, n = files.length; i < n; i++){
@@ -188,17 +193,10 @@
         return this.$store.getters.getActiveChatId;
       },
       messages() {
-         if (jquery(".item.selected").length === 0) {
-           jquery(".item").first().addClass("selected");
-         }
-
-         /*let f = this.$store.getters.getChats.filter(item => item.sitepower_id == this.getId);
-         if (f && f[0] && f[0].messages)
-         return f[0].messages;*/
          return this.$store.getters.getMessages;
       },
       getChatOpenDt () {
-        let chat = this.$store.getters.getChats.filter(item => item.sitepower_id == this.getId)
+        let chat = this.$store.getters.getChats[this.getId]
         if (chat && chat[0]) {
           return chat[0].lastOpenDt;
         }

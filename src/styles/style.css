@@ -7,6 +7,7 @@
   flex-direction: row;
   align-items: center;
   background-color: black;
+
 }
 .header.index {
   position: fixed;
@@ -49,11 +50,53 @@
   text-decoration: none;
 }
 
+.under-header {
+  height: 5vh;
+  display: flex;
+  align-items: flex-end;
+  background-color: black;
+}
+
+.under-header .nav-custom {
+  width: 350px;
+  justify-content: space-between;
+  flex-direction: row;
+  flex-wrap: nowrap;
+}
+.under-header .nav-custom .nav-item{
+  width: 100%;
+}
+.under-header .nav-link {
+  padding: 5px;
+  color:white;
+  font-size: 12px;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.under-header .nav-link .color {
+  height: 5px;
+  width: 5px;
+  background-color: #FFDC60;
+  display: inline-block;
+  border-radius: 50%;
+  margin-left: 5px;
+  align-self: flex-start;
+}
+
+.under-header .nav-link.active, .under-header .nav-link:hover {
+  background-color: #363E48;
+  color: white;
+  border-radius: 0px;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+}
 .main {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
-  height: 85vh;
+  height: 80vh;
 }
 .main.index {
   background-color: black;
@@ -80,6 +123,24 @@
   align-items: center;
   width: 350px;
 }
+
+.main .left-side .nav-custom {
+  width: 100%;
+  margin-top: 10px;
+  padding-right: 15px;
+  padding-left: 15px;
+  justify-content: space-between;
+}
+.main .left-side .nav-link {
+  padding: 5px;
+  color:white;
+  font-size: 12px;
+}
+.main .left-side .nav-link.active {
+  background-color: white;
+  color: black;
+}
+
 .main .left-side .input-group {
   width: 350px;
 }
@@ -185,7 +246,7 @@
   display: flex;
   flex-direction: column;
   text-align: center;
-  min-width: 25%;
+  /*min-width: 25%;*/
 }
 
 .main .left-side .chats .item .right {
@@ -630,6 +691,12 @@
 /* MODAL NEW ADD END */
 
 @media (max-width: 1000px) {
+  .under-header .nav-custom {
+    width: 100%;
+  }
+  .under-header .nav-link  {
+    width: 100%;
+  }
   .modal-login {
     width: auto;
   }
@@ -1440,7 +1507,23 @@
   }
   .header {
     height: auto;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
   }
+
+  .under-header {
+    position: fixed;
+    top: 85px;
+    width: 100%;
+    z-index: 100;
+  }
+
+  .main {
+    flex-direction: column;
+    padding-top: 105px;
+  }
+
   .header .menu {
     text-align: center;
     margin-top: 10px;
@@ -1596,6 +1679,56 @@
   }
   .section_services .item .adv {
     justify-content: center;
+  }
+
+  .main .input {
+    display: flex;
+    background-color: white;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    bottom: 0;
+    position: fixed;
+    width: 100%;
+    flex: 0 0 auto;
+  }
+  .main .input .left {
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+  .main .input .pin-file {
+    margin-left: 20px;
+    display: flex;
+    align-items: center;
+  }
+  .main .input .smiles {
+    margin-left: 10px;
+    color:#A0A0A0;
+    font-size: 26px;
+    cursor: pointer;
+  }
+  .main .input .button {
+    margin-right: 20px;
+  }
+  .main .input .msg {
+    margin-left: 20px;
+    width: 100%;
+    margin-right: 20px;
+  }
+  .main .input .msg input:focus {
+    outline:none;
+  }
+  .main .input .msg input {
+    border:0;
+    width: 100%;
+  }
+
+  .main .chat .messages {
+    padding-right: 30px;
+    padding-left: 30px;
+    flex: 1 0 auto;
+    padding-bottom: 80px;
   }
 }
 

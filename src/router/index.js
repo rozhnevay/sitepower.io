@@ -5,7 +5,10 @@ import Router from "vue-router"
 
 import Private from '../Private';
 import Administration from '../components/Private/Administration';
-import Chat from '../components/Private/Chat';
+import Chats from '../components/Private/Chats';
+
+import ChatList from '../components/Private/ChatList';
+import ChatBody from '../components/Private/ChatBody';
 
 import Home from '../components/Public/Home';
 import Login from '../components/Public/Login';
@@ -64,9 +67,21 @@ export default new Router({
           component: Administration,
         },
         {
-          path: "chat",
-          name: 'Chat',
-          component: Chat,
+          path: "chats",
+          name: 'Chats',
+          component: Chats,
+          children: [
+            {
+              path: "list",
+              name: 'ChatList',
+              component: ChatList,
+            },
+            {
+              path: "body",
+              name: 'ChatBody',
+              component: ChatBody,
+            },
+          ]
         }
       ],
       beforeEnter: ifAuthenticated
