@@ -10,7 +10,6 @@ import Chats from '../components/Private/Chats';
 import ChatList from '../components/Private/ChatList';
 import ChatBody from '../components/Private/ChatBody';
 
-import Home from '../components/Public/Home';
 import Login from '../components/Public/Login';
 import Registration from '../components/Public/Registration';
 import PasswordReset from '../components/Public/PasswordReset';
@@ -33,8 +32,7 @@ export default new Router({
   routes: [
     {
       path: "/",
-      name: 'Home',
-      component: Home,
+      component: Login,
     },
     {
       path: "/login",

@@ -33,7 +33,7 @@
   export default {
     name: 'PasswordResetSuccess',
     created(){
-      setTimeout( () => this.$router.push({ name: 'Home'}), 4000);
+      setTimeout( () => this.$router.push({ name: 'Login'}), 4000);
 
     }
   }
