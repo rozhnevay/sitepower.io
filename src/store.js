@@ -15,17 +15,19 @@ export default new Vuex.Store({
       authStatus : ""
     },
     systemInfo: {
-      chats : [],
+      chats : {},
       chatsStatus : "",
       chatsError : "",
       forms: [],
       operators : [],
       messages: [],
+      lastId : "",
       activeFormId: "",
       activeChatId: "",
       activeCategory: "",
       activeOperatorId:"",
-      activeChatPrintingTm: ""
+      activeChatPrintingTm: "",
+      activeChatPrintingName: ""
     }
   },
 
@@ -59,6 +61,9 @@ export default new Vuex.Store({
     },
     getActiveChatPrintingTm: state => {
       return state.systemInfo.activeChatPrintingTm;
+    },
+    getActiveChatPrintingName: state => {
+      return state.systemInfo.activeChatPrintingName;
     },
     getMessages: state => {
       return state.systemInfo.messages;
@@ -117,83 +122,13 @@ export default new Vuex.Store({
     setActiveChatPrintingTm: (state, val) => {
       state.systemInfo.activeChatPrintingTm = val;
     },
-    socket_receive: (state, receive_msg) => {
-      const msg = receive_msg.msg;
-      const chat = receive_msg.chat;
-      if (!msg || !chat) return;
-      console.log("receive");
-      console.log(receive_msg);
-      console.log(msg);
-      console.log(chat);
 
-      let chatItem, chatId;
-      chatId = msg.direction === "to_user" ? msg.sender_id : msg.recepient_id;
-      chatItem = state.systemInfo.chats[chatId];
-      // 1. Такой чат - уже есть
-      if (chatItem) {
-        // 1. Если это активный чат - пушаем в него сообщение
-        chatId === state.systemInfo.activeChatId ? state.systemInfo.messages.push(msg) : null;
-        // 2. Обновляем состояние чата
-        let res = Object.assign(state.systemInfo.chats[chatId], chat);
-        console.log(res);
-      }
-      if (msg.direction === "to_user") {
-        if (Notification.permission === "granted") {
-          let notification = new Notification(chat.name, {body: msg.body});
-          notification.onclick = () => console.log("click");
-        }
-      }
-
-
-
-
-
-
-
-
-
-
-
-      /*console.log("chatItem = " + chatItem);
-      if (!chatItem) {
-        axios.get("/api/chat/" + chatId).then((item) => {
-
-          item = item.data;
-          item.lastMessage = () => {
-            if (item.messages && item.messages.length) {
-              return item.messages[item.messages.length - 1];
-            }
-            return {};
-          };
-          item.countUnread = () => {
-            if (item.messages && item.messages.length) {
-              let unread = item.messages.filter(u => moment(u.created) > moment(item.lastOpenDt) && u.direction === "to_user")
-              if (unread && unread.length > 0) {
-                return unread.length;
-              }
-            }
-            return 0;
-          }
-          state.systemInfo.chats.push(item)
-          state.systemInfo.chats.sort((a,b)=> {
-            let alastMC = a.lastMessage().created;
-            let blastMC = b.lastMessage().created;
-            if (moment(alastMC) < moment(blastMC)) return 1
-            else if (moment(alastMC) > moment(blastMC)) return -1
-            else return 0
-          });
-        }).catch(err => console.log(err.message))
-      } else {
-        chatItem.messages.push(msg);
-      }*/
-
-
-    },
     socket_print: (state, msg) => {
       console.log("print");
       console.log(msg);
-      if (msg.sender_id === state.systemInfo.activeChatId) {
+      if (msg.sender_id === state.systemInfo.activeChatId || (msg.chat_id && msg.chat_id === state.systemInfo.activeChatId)) {
         state.systemInfo.activeChatPrintingTm = msg.created;
+        state.systemInfo.activeChatPrintingName = msg.operator_name ? msg.operator_name : "Посетитель";
       }
     },
     ACTIVE_CATEGORY: (state, category) => {
@@ -207,27 +142,37 @@ export default new Vuex.Store({
       state.systemInfo.chatsStatus = status;
       state.systemInfo.chatsError = error;
     },
-    CHATS: (state, chats) => state.systemInfo.chats = chats,
+    CHATS: (state, chats) => {
+      console.log(Object.keys(chats));
+      Object.keys(chats).forEach(key => {
+        Vue.set(state.systemInfo.chats, key, chats[key]);
+      });
+    },
     MESSAGES_STATUS:   (state, status, error) => {
       state.systemInfo.chatsStatus = status;
       state.systemInfo.chatsError = error;
     },
     MESSAGES: (state, messages) => state.systemInfo.messages = messages,
+    LAST_ID: (state, id) => state.systemInfo.lastId = id,
   },
 
   actions: {
-    CHATS_REQUEST: ({commit}, props) => {
+    CHATS_REQUEST: ({commit, state}, props) => {
       return new Promise((resolve, reject) => {
         commit('CHATS_STATUS', "Loading");
-        axios.get("/api/chats")
+        let params = {limit:20};
+        if (state.systemInfo.lastId) params.beforeId = state.systemInfo.lastId;
+        axios.get("/api/chats", {params:params})
           .then(res => {
             commit('CHATS_STATUS', "Success");
-            commit('CHATS', res.data);
-            resolve();
+            commit('CHATS', res.data.chats);
 
-            if (res.data && Object.keys(res.data)[0]) {
-              commit('ACTIVE_CHAT_ID', Object.keys(res.data)[0]);
+            if (!state.systemInfo.activeChatId && res.data.chats && Object.keys(res.data.chats)[0]) {
+              commit('ACTIVE_CHAT_ID', Object.keys(res.data.chats)[0]);
             }
+
+            commit('LAST_ID', res.data.meta.lastId);
+            resolve();
           }).catch(err => {
           commit('CHATS_STATUS', "Error", err.message);
           reject(err);
@@ -344,6 +289,15 @@ export default new Vuex.Store({
         });
       });
     },
+    ACTIVE_CHAT_SEND: ({commit, state, dispatch}) => {
+      return new Promise((resolve, reject) => {
+        axios.get("/api/chat/" + state.systemInfo.activeChatId + "/send").then((res) => {
+          resolve();
+        }).catch((err) => {
+          reject(err);
+        });
+      });
+    },
     SET_ACTIVE_CHAT_CONTACT: ({commit, state, dispatch}, item) => {
       return new Promise((resolve, reject) => {
         axios.post("/api/chat/" + state.systemInfo.activeChatId + "/contact", {name:item.name, login:item.login, phone:item.phone}).then((res) => {
@@ -353,6 +307,35 @@ export default new Vuex.Store({
           reject(err);
         });
       });
+    },
+    socket_receive: ({commit, state, dispatch}, receive_msg) => {
+      console.log("receive");
+      const msg = receive_msg.msg;
+      const chat = receive_msg.chat;
+      if (!msg || !chat) return;
+      console.log(receive_msg);console.log(msg);console.log(chat);
+
+      let chatItem, chatId;
+      chatId = msg.direction === "to_user" ? msg.sender_id : msg.recepient_id;
+      chatItem = state.systemInfo.chats[chatId];
+      // 1. Такой чат - уже есть
+      if (chatItem) {
+        // 1. Если это активный чат - пушаем в него сообщение
+        chatId === state.systemInfo.activeChatId ? state.systemInfo.messages.push(msg) : null;
+        // 2. Обновляем состояние чата
+        Object.assign(state.systemInfo.chats[chatId], chat);
+        // 3. пересортировка чатов
+      } else {
+        dispatch('CHATS_REQUEST');
+      }
+
+      /* уведомление */
+      if (msg.direction === "to_user") {
+        if (Notification.permission === "granted") {
+          let notification = new Notification(chat.name, {body: msg.body});
+          notification.onclick = () => console.log("click");
+        }
+      }
     },
   }
 });

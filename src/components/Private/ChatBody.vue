@@ -19,13 +19,13 @@
           <!--<span class="time">{{msg.created |moment('calendar', null, { sameDay: 'HH:mm:ss',  lastWeek: 'DD.MM HH:mm:ss', sameElse: 'DD.MM HH:mm:ss'})}}</span>-->
 
           <span v-if="msg.direction == 'from_user' && msg.type=='text'" class="msg">{{msg.body}}</span>
-          <a v-if="msg.direction == 'from_user' && msg.type=='link'" class="msg" :href="msg.link" target="_blank"><span  class="attachment badge badge-light"><i class="fas fa-file"></i>{{msg.body}}</span></a>
+          <a v-if="msg.type=='link'" class="msg" :href="msg.link" target="_blank"><span  class="attachment badge badge-light"><i class="fas fa-file"></i>{{msg.body}}</span></a>
 
         </div>
 
       </div>
       <div  class="info"><div class="systems text-left">
-        <p v-if="printingFlag == 'Y'" class="msg">Клиент печатает...</p>
+        <p v-if="printingFlag == 'Y'" class="msg">{{nameUserPrint}} печатает...</p>
         <p v-else class="msg" style="color:transparent">Waiting for a message</p>
       </div></div>
 
@@ -73,7 +73,7 @@
           </div>
         </emoji-picker>
         <div class="msg">
-          <textarea maxlength="1000" placeholder="Введите сообщение..." v-model="msg"></textarea>
+          <textarea maxlength="1000" placeholder="Введите сообщение..." v-model="msg" ></textarea>
         </div>
       </div>
 
@@ -103,7 +103,8 @@
     name: 'ChatBody',
     data () {
       return {
-        msg: ""
+        msg: "",
+        nameUserPrint : ""
       }
     },
     mounted() {
@@ -112,7 +113,6 @@
         this.$store.dispatch('MESSAGES_REQUEST', {/*тип запроса*/});
       });
 
-
       autosize($('.input .msg textarea'));
       let self = this;
       setInterval(() => {
@@ -120,6 +120,24 @@
           self.$store.commit("setActiveChatPrintingTm","");
         }
       }, 1000)
+
+      $(".msg textarea").on("keydown", function (event) {
+        if (event.keyCode === 13) {
+          event.preventDefault();
+          that.submitForm();
+          return;
+        }
+        if (/[а-яА-Яa-zA-Z0-9-_ ]/.test(String.fromCharCode(event.keyCode))) {
+          var msg = {};
+          msg.body = "";
+          msg.type = "print";
+          msg.link = "";
+          msg.chat_id = that.$store.getters.getActiveChatId;
+          msg.operator_name = that.$store.getters.USER_NAME;
+          that.$socket.emit("print", msg);
+        }
+      });
+
      },
     updated() {
       $(".messages").scrollTop($(".messages").prop("scrollHeight"));
@@ -166,7 +184,6 @@
         let files = this.$refs.file.files;
         for (var i = 0, n = files.length; i < n; i++){
           let file = files[i];
-
           // выставляем крутилку на скрепку
           let formData = new FormData();
           formData.append('file', file);
@@ -176,9 +193,9 @@
 
             sendMessage.direction = "from_user";
             sendMessage.recepient_id = this.$store.getters.getActiveChatId;
-            sendMessage.body = file.name;
+            sendMessage.body = res.data.file;
             sendMessage.type = "link";
-            sendMessage.link = res.data;
+            sendMessage.link = res.data.url;
             this.$socket.emit("send", sendMessage);
 
           }).catch(err => console.log(err.message))
@@ -186,6 +203,7 @@
 
 
         }
+        this.$refs.file.value = '';
       }
     },
     computed : {
@@ -207,6 +225,7 @@
       },
       printingFlag(){
         if (moment(this.$store.getters.getActiveChatPrintingTm).add(moment.duration(1, 'seconds')) > moment()){
+          this.nameUserPrint = this.$store.getters.getActiveChatPrintingName;
           return "Y";
         }
         return "N";

@@ -3,19 +3,19 @@
     <!--<div v-if="isMobile" class="mobile-message">-->
       <!--<div class="alert alert-warning m-0" role="alert">Мы заметили что вы с телефона, перезагрузите страницу для корректного отображения</div>-->
     <!--</div>-->
-    <div class="under-header">
-      <ul class="nav nav-custom nav-pills" id="pills-tab" role="tablist">
-        <li class="nav-item">
-          <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true"><i class="fas fa-comments mr-1"></i> Мои диалоги <span class="color"></span></a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false"><i class="fas fa-comment-dots mr-1"></i> Очередь <span class="color"></span></a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" id="pills-contact-tab" data-toggle="pill" href="#pills-contact" role="tab" aria-controls="pills-contact" aria-selected="false"><i class="fas fa-comment mr-1"></i> Все диалоги</a>
-        </li>
-      </ul>
-    </div>
+    <!--<div class="under-header">-->
+      <!--<ul class="nav nav-custom nav-pills" id="pills-tab" role="tablist">-->
+        <!--<li class="nav-item">-->
+          <!--<a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true"><i class="fas fa-comments mr-1"></i> Мои диалоги <span class="color"></span></a>-->
+        <!--</li>-->
+        <!--<li class="nav-item">-->
+          <!--<a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false"><i class="fas fa-comment-dots mr-1"></i> Очередь <span class="color"></span></a>-->
+        <!--</li>-->
+        <!--<li class="nav-item">-->
+          <!--<a class="nav-link" id="pills-contact-tab" data-toggle="pill" href="#pills-contact" role="tab" aria-controls="pills-contact" aria-selected="false"><i class="fas fa-comment mr-1"></i> Все диалоги</a>-->
+        <!--</li>-->
+      <!--</ul>-->
+    <!--</div>-->
     <div v-if="!isMobile" class="main">
       <chat-list-component></chat-list-component>
       <chat-body-component></chat-body-component>

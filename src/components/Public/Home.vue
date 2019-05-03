@@ -26,9 +26,9 @@
         <!--</nav>-->
         <div class="menu">
           <ul>
-            <li class="active"><a href="#">О сервисе</a></li>
-            <li><a href="#">Возможности</a></li>
-            <li><a href="#">Тарифы</a></li>
+            <li class="active"><a href="#home-main">О сервисе</a></li>
+            <li><a href="#home-opportunities">Возможности</a></li>
+            <li><a href="#home-tariffs">Тарифы</a></li>
           </ul>
         </div>
         <div class="buttons d-flex justify-content-center">
@@ -46,7 +46,7 @@
         </div>
       </div>
     </div> <!-- END HEADER -->
-    <div class="main index">
+    <div id="home-main" class="main index">
       <div class="container">
         <div class="row">
           <div class="col-lg-6 main-text align-items-center">
@@ -90,7 +90,7 @@
       <!--</div>-->
     <!--</div>-->
 
-    <div class="section_opportunities mt-50">
+    <div id="home-opportunities" class="section_opportunities mt-50">
       <div class="container">
         <div class="row">
           <div class="col-lg-4">
@@ -130,16 +130,16 @@
       </div>
     </div>
 
-    <div class="section_services mt-50">
+    <div id="home-tariffs" class="section_services mt-50">
       <div class="container">
         <div class="row">
           <div class="col-lg-4">
-            <h1 class="title">Наши услуги</h1>
-            <p class="desc">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod…</p>
+            <h1 class="title">Наши тарифы</h1>
+            <p class="desc">Для ознакомления с приложением доступен пробный тариф, который позволяет использовать приложение абсолютно бесплатно первые 30 дней</p>
           </div>
         </div>
         <div class="row justify-content-lg-center mt-50">
-          <div class="col-xl-4 col-lg-6 col-md-12 mb-4">
+          <div class="col-xl-6 col-lg-6 col-md-12 mb-6">
             <div class="item">
               <div class="top">
                 <div class="icon">
@@ -150,7 +150,7 @@
                 </div>
               </div>
 
-              <p class="desc">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do…</p>
+              <p class="desc">Пробный тариф позволяет ознакомиться со всеми функцииями приложениями бесплатно. Реквизиты карты и любый платежные реквизиты вводить не потребуется.</p>
               <div class="advantages">
                 <div class="adv">
                   <span class="check"><i class="fas fa-check"></i></span>
@@ -170,12 +170,12 @@
                 </div>
               </div>
               <button type="button" class="btn btn-outline-black">
-                Попробовать
+                Попробовать бесплатно
               </button>
             </div>
           </div>
 
-          <div class="col-xl-4 col-lg-6 col-md-12 mb-4">
+          <div class="col-xl-6 col-lg-6 col-md-12 mb-6">
             <div class="item">
               <div class="top">
                 <div class="icon">
@@ -210,47 +210,47 @@
             </div>
           </div>
 
-          <div class="col-xl-4 col-lg-6 col-md-12 mb-4">
-            <div class="item">
-              <div class="top">
-                <div class="icon">
-                  <img src="../../assets/icon-3.svg" alt="">
-                </div>
-                <div class="text">
-                  <h2 class="title">Настраиваемый тариф SitePower</h2>
-                </div>
-              </div>
-              <p class="desc">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do…</p>
+          <!--<div class="col-xl-4 col-lg-6 col-md-12 mb-4">-->
+            <!--<div class="item">-->
+              <!--<div class="top">-->
+                <!--<div class="icon">-->
+                  <!--<img src="../../assets/icon-3.svg" alt="">-->
+                <!--</div>-->
+                <!--<div class="text">-->
+                  <!--<h2 class="title">Настраиваемый тариф SitePower</h2>-->
+                <!--</div>-->
+              <!--</div>-->
+              <!--<p class="desc">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do…</p>-->
 
-              <div class="advantages">
-                <div class="adv">
-                  <span class="check"><i class="fas fa-check"></i></span>
-                  <span class="text">Lorem ipsum dolor sit amet, consectetur</span>
-                </div>
-                <div class="adv">
-                  <span class="check"><i class="fas fa-check"></i></span>
-                  <span class="text">Lorem ipsum dolor sit amet, consectetur</span>
-                </div>
+              <!--<div class="advantages">-->
+                <!--<div class="adv">-->
+                  <!--<span class="check"><i class="fas fa-check"></i></span>-->
+                  <!--<span class="text">Lorem ipsum dolor sit amet, consectetur</span>-->
+                <!--</div>-->
+                <!--<div class="adv">-->
+                  <!--<span class="check"><i class="fas fa-check"></i></span>-->
+                  <!--<span class="text">Lorem ipsum dolor sit amet, consectetur</span>-->
+                <!--</div>-->
 
-                <div class="adv">
-                  <span class="check"><i class="fas fa-check"></i></span>
-                  <span class="text">Lorem ipsum dolor sit amet, consectetur</span>
-                </div>
+                <!--<div class="adv">-->
+                  <!--<span class="check"><i class="fas fa-check"></i></span>-->
+                  <!--<span class="text">Lorem ipsum dolor sit amet, consectetur</span>-->
+                <!--</div>-->
 
-                <div class="adv">
-                  <span class="check"><i class="fas fa-check"></i></span>
-                  <span class="text">Lorem ipsum dolor sit amet, consectetur</span>
-                </div>
+                <!--<div class="adv">-->
+                  <!--<span class="check"><i class="fas fa-check"></i></span>-->
+                  <!--<span class="text">Lorem ipsum dolor sit amet, consectetur</span>-->
+                <!--</div>-->
 
-              </div>
+              <!--</div>-->
 
-              <button type="button" class="btn btn-outline-black">
-                Попробовать
-              </button>
+              <!--<button type="button" class="btn btn-outline-black">-->
+                <!--Попробовать-->
+              <!--</button>-->
 
-            </div>
+            <!--</div>-->
 
-          </div>
+          <!--</div>-->
 
         </div>
 
@@ -266,39 +266,39 @@
 
           <div class="row mt-30">
 
-            <div class="col-lg-2 col-md-3 col-6">
-              <p class="title">Продукт</p>
-              <ul>
-                <li><a class="f-link" href="">Тарифы</a></li>
-                <li><a class="f-link" href="">Возможности</a></li>
-                <li><a class="f-link" href="">Партерам</a></li>
-              </ul>
-            </div>
+            <!--<div class="col-lg-2 col-md-3 col-6">-->
+              <!--<p class="title">Продукт</p>-->
+              <!--<ul>-->
+                <!--<li><a class="f-link" href="">Тарифы</a></li>-->
+                <!--<li><a class="f-link" href="">Возможности</a></li>-->
+                <!--<li><a class="f-link" href="">Партерам</a></li>-->
+              <!--</ul>-->
+            <!--</div>-->
 
-            <div class="col-lg-2 col-md-3 col-6">
-              <p class="title">Продукт</p>
-              <ul>
-                <li><a class="f-link" href="">Тарифы</a></li>
-                <li><a class="f-link" href="">Возможности</a></li>
-                <li><a class="f-link" href="">Партерам</a></li>
-              </ul>
-            </div>
+            <!--<div class="col-lg-2 col-md-3 col-6">-->
+              <!--<p class="title">Продукт</p>-->
+              <!--<ul>-->
+                <!--<li><a class="f-link" href="">Тарифы</a></li>-->
+                <!--<li><a class="f-link" href="">Возможности</a></li>-->
+                <!--<li><a class="f-link" href="">Партерам</a></li>-->
+              <!--</ul>-->
+            <!--</div>-->
 
-            <div class="col-lg-3 col-md-3 col-12">
+            <div class="col-lg-6 col-md-6 col-12 text-md-right">
               <p class="title">Информация</p>
               <ul>
                 <li><a class="f-link" href="">Договор оферты</a></li>
                 <li><a class="f-link" href="">Политика конфиденциальности</a></li>
                 <li><a class="f-link" href="">О компании</a></li>
-                <li><a class="f-link" href="">База знаний</a></li>
-                <li><a class="f-link" href="">Интеграции</a></li>
+                <!--<li><a class="f-link" href="">База знаний</a></li>-->
+                <!--<li><a class="f-link" href="">Интеграции</a></li>-->
               </ul>
             </div>
 
-            <div class="col-lg-5 col-md-3 col-12 text-center text-md-right">
-              <p class="phone">8(800)333-33-33</p>
-              <p class="adress">112313, Москва, <br> ул. Ленина, д.20, корпус 2</p>
-              <p class="copyright">© 2019 ООО «Сайт Повер»</p>
+            <div class="col-lg-6 col-md-6 col-12 text-center text-md-right">
+              <!--<p class="phone">8(800)333-33-33</p>-->
+              <p class="adress">112313, Москва, <br> ул. Солдатская, д.8, корпус 2</p>
+              <p class="copyright">© 2019 ИП Рожнев Алексей Юрьевич</p>
             </div>
 
 

@@ -9,7 +9,7 @@
     <div class="overflow-auto">
       <div class="information">
         <span class="title">Информация</span>
-        <!--<p class="items">Region: Moscow</p>-->
+        <p class="items" v-if="chat.region">Регион: {{chat.region}}</p>
         <p class="items" v-if="chat.login">Email: {{chat.login}}</p>
         <p class="items" v-if="chat.phone">Телефон: {{chat.phone}}</p>
         <hr>
@@ -18,7 +18,7 @@
         <span class="title">Действия</span>
         <div class="buttons">
 
-          <button class="btn btn-blue">Отправить диалог на email</button>
+          <button class="btn btn-blue" data-target="#chatsend" data-toggle="modal" @click="send">Отправить диалог на email</button>
           <button class="btn btn-blue" data-target="#chatinfo" data-toggle="modal" @click="showChatInfoModal">Добавить контакты</button>
           <button class="btn btn-red" @click="setSpam">В спам!</button>
         </div>
@@ -38,12 +38,14 @@
       </div>
     </div>
     <chat-info-modal-component></chat-info-modal-component>
+    <chat-send-component></chat-send-component>
   </div>
 
 </template>
 
 <script>
   import ChatInfoModal from './ModalChatInfo';
+  import ChatSendModal from './ModalSend';
   export default {
     name: 'ChatInfo',
     methods :{
@@ -52,6 +54,9 @@
       },
       setSpam() {
         this.$store.dispatch('SET_ACTIVE_CHAT_SPAM').then().catch(err => console.log(err)); /* TODO - заглушка*/
+      },
+      send() {
+        this.$store.dispatch('ACTIVE_CHAT_SEND').then().catch(err => console.log(err)); /* TODO - заглушка*/
       },
       showChatInfoModal () {
         this.$root.$emit("chatinfo_open", this.chat);
@@ -69,6 +74,7 @@
       }
     },
     components : {
+      'chat-send-component' : ChatSendModal,
       'chat-info-modal-component' : ChatInfoModal
     }
   }
