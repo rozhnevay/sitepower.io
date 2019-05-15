@@ -16,25 +16,33 @@
         <!--</li>-->
       <!--</ul>-->
     <!--</div>-->
-    <div v-if="!isMobile" class="main">
+    <div v-if="!isMobile && Object.keys(chats).length > 0" class="main">
       <chat-list-component></chat-list-component>
       <chat-body-component></chat-body-component>
       <chat-info-component></chat-info-component>
     </div>
-    <div v-else class="main">
-      <router-view></router-view>
+    <div :class="[ isMobile ?  'main' : '' ]" v-if="Object.keys(chats).length === 0 && status !== 'Loading'">
+      <div class="row">
+        <div class="text-center stub">
+          <p>Пока у Вас нет ни одного сообщения. Как только у Вас появится активный диалог, он отобразится на этом экране</p>
+          <hr>
+          <p>А пока, Вы можете отправить сообщение с <a :href="testFormId" target="_blank">тестовой страницы</a>.</p>
+          <img src="../../assets/happy.svg" alt="">
+        </div>
+      </div>
+    </div>
+    <div class="main" v-if="isMobile">
+        <chat-list-component></chat-list-component>
     </div>
   </div>
 </template>
 
 <script>
-  import Vue from 'vue';
+
   import ChatList from '../Private/ChatList';
   import ChatBody from '../Private/ChatBody';
   import ChatInfo from '../Private/ChatInfo';
-  import VueSocketIO from 'vue-socket.io';
-  import SocketIO from 'socket.io-client';
-  import store from '../../store';
+
 
   export default {
     name: 'Chats',
@@ -46,21 +54,33 @@
     computed: {
       isMobile: function() {
         return this.$isMobile();
+      },
+      chats() {
+        return this.$store.getters.getChats;
+      },
+      status() {
+        return this.$store.getters.getChatsStatus;
+      },
+      testFormId() {
+        const domain = process.env.NODE_ENV === "production" ? 'https://ws.sitepower.io' : 'http://localhost:3000';
+        return domain + '/page/' + this.$store.getters.TEST_FORM_ID;
       }
+
     },
     mounted() {
-      Vue.use(new VueSocketIO({
-        debug: true,
-        connection: SocketIO(':3031/', {path:'/socket.io'}),
-        vuex: {
-          store,
-          actionPrefix: 'socket_',
-          mutationPrefix: 'socket_'
-        },
-      }))
+      const host = process.env.NODE_ENV === "production" ? 'https://ws.sitepower.io' : 'localhost:3000';
+
       if (this.$isMobile()) {
         this.$router.push({name: 'ChatList'})
       }
+
+      this.$store.dispatch('CHATS_REQUEST', {/*тип запроса*/})
+          .then(() => this.$store.dispatch('MESSAGES_REQUEST').then().catch( err => console.log(err.message)))
+          .catch(err => {
+            alert ("Не удалось получить список диалогов. Попробуйте позже");
+            console.log(err.message)
+          });
+
     }
   }
 </script>

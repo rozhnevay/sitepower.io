@@ -11,10 +11,11 @@
           <div class="md-main">
             <form @submit="checkForm" action="#" method="POST">
               <div class="form-group">
-                <label for="name">Your website address</label>
+                <label for="name">Укажите адрес Вашего сайта</label>
                 <input type="name" class="form-control" id="name" required placeholder="sitepower.io" v-model="origin">
+                <p class="text-muted">Укажите без "http://" и "www"</p>
               </div>
-              <button class="btn btn-black mt-20 w-100">Add</button>
+              <button class="btn btn-black mt-20 w-100">Добавить</button>
             </form>
 
           </div>
@@ -38,7 +39,7 @@
     methods: {
       checkForm (e) {
         e.preventDefault();
-        axios.post("/api/form", {origin:this.origin}).then(() => {
+        /*axios.post("/api/form", {origin:this.origin}).then(() => {
           axios.get("/api/forms").then((res) => {
             let forms = res.data;
 
@@ -54,7 +55,10 @@
           })
         }).catch((err) => {
           console.log("Error in creating form: ", err.message)
-        })
+        })*/
+
+        this.$store.dispatch('FORM_CREATE', this.origin);
+        this.$root.$emit("newsite_added");
 
         jquery('#newsite').modal('hide');
         jquery('body').removeClass('modal-open');

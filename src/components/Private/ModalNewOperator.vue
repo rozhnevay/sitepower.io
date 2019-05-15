@@ -11,10 +11,10 @@
           <div class="md-main">
             <form @submit="checkForm" action="#" method="POST">
               <div class="form-group">
-                <label for="name">Your operator's email</label>
+                <label for="name">Email оператора</label>
                 <input type="email" class="form-control" id="name" required placeholder="ivan@gmail.com" v-model="login">
               </div>
-              <button class="btn btn-black mt-20 w-100">Add</button>
+              <button class="btn btn-black mt-20 w-100">Отправить приглашение</button>
             </form>
 
           </div>

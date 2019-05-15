@@ -1,6 +1,6 @@
 <template>
-  <div class="chat">
-    <div class="messages overflow-auto">
+    <div class="chat">
+    <div class="messages overflow-auto" id="messages">
       <!--<div class="systems">-->
         <!--<p class="msg">Клиент открыл чат</p>-->
         <!--<span class="time">18:30:14</span>-->
@@ -13,13 +13,18 @@
         <div v-if="dateSeparator(msg, index)" class="new-msg-separator">
           {{dateSeparator(msg, index)}}
         </div>
-        <div :class="[ msg.direction == 'from_user' ?  'admin' : 'client' ]">
-          <span v-if="msg.direction == 'to_user' && msg.link==''" class="msg">{{msg.body}}</span>
+        <div v-if="ownerSeparator(msg, index)" style="margin-top:20px;">
+          <span class="text-muted" :style="msg.direction === 'from_user' ? 'padding-left: 65px;' : ''">{{ownerSeparator(msg, index)}}</span>
+        </div>
+        <div :class="[ msg.direction === 'from_user' ?  'admin' : 'client' ]">
+
+          <span v-if="msg.direction === 'to_user' && msg.link===''" class="msg">{{msg.body}}</span>
+          <a v-if="msg.type==='link' && msg.direction === 'to_user'" class="msg" :href="msg.link" target="_blank"><span><i class="fas fa-file"></i> {{msg.body}}</span></a>
           <div class="time">{{msg.created | moment("HH:mm:ss")}}</div>
           <!--<span class="time">{{msg.created |moment('calendar', null, { sameDay: 'HH:mm:ss',  lastWeek: 'DD.MM HH:mm:ss', sameElse: 'DD.MM HH:mm:ss'})}}</span>-->
 
-          <span v-if="msg.direction == 'from_user' && msg.type=='text'" class="msg">{{msg.body}}</span>
-          <a v-if="msg.type=='link'" class="msg" :href="msg.link" target="_blank"><span  class="attachment badge badge-light"><i class="fas fa-file"></i>{{msg.body}}</span></a>
+          <span v-if="msg.direction === 'from_user' && msg.type==='text'" class="msg">{{msg.body}}</span>
+          <a v-if="msg.type==='link' && msg.direction === 'from_user'" class="msg" :href="msg.link" target="_blank"><span><i class="fas fa-file"></i> {{msg.body}}</span></a>
 
         </div>
 
@@ -28,11 +33,6 @@
         <p v-if="printingFlag == 'Y'" class="msg">{{nameUserPrint}} печатает...</p>
         <p v-else class="msg" style="color:transparent">Waiting for a message</p>
       </div></div>
-
-
-
-
-
     </div>
     <div class="input">
 
@@ -41,12 +41,6 @@
           <input type="file" name="file[]" id="file" ref="file" v-on:change="handleFileUpload()" class="inputfile inputfile-5" hidden data-multiple-caption="{count} files selected" multiple />
           <label for="file"><img src="../../assets/files.svg" alt=""></label>
         </div>
-
-<!--
-        <div class="smiles">
-          <i class="fas fa-smile" data-emojiable="true"></i>
-        </div>
--->
         <emoji-picker @emoji="append" :emojiTable="getCustomEmo">
           <div
             class="smiles fas fa-smile"
@@ -137,13 +131,56 @@
           that.$socket.emit("print", msg);
         }
       });
+      /*для скроллинга*/
+      $(".messages").scrollTop($(".messages").prop("scrollHeight"));
+      if (this.$isMobile) {
+        $('html,body').animate({
+          scrollTop: 9999
+        }, 0, function(){
+          $('html,body').clearQueue();
+        });
+      }
 
      },
     updated() {
-      $(".messages").scrollTop($(".messages").prop("scrollHeight"));
-    },
-    methods: {
+      if ($(".messages").scrollTop !== $(".messages").prop("scrollHeight")){
+        $(".messages").scrollTop($(".messages").prop("scrollHeight"));
+      }
 
+      if (this.$isMobile) {
+        $('html,body').animate({
+          scrollTop: 9999
+        }, 0, function(){
+          $('html,body').clearQueue();
+        });
+      }
+
+    },
+    // watch: {
+    //   messages() {
+    //     $(".messages").scrollTop($(".messages").prop("scrollHeight"));
+    //     if (this.$isMobile) {
+    //       $('html,body').animate({
+    //         scrollTop: 9999
+    //       }, 0, function(){
+    //         $('html,body').clearQueue();
+    //       });
+    //     }
+    //   }
+    // },
+    methods: {
+      ownerSeparator(msg, index){
+        const prevMsg = this.messages[index-1]
+
+        let prevMsgOwner;
+        if (!prevMsg) prevMsgOwner = "NONE";
+        else if (prevMsg.operator_name) prevMsgOwner = prevMsg.operator_id === this.$store.getters.USER_ID ? "Вы" : prevMsg.operator_name;
+        else prevMsgOwner = "Посетитель";
+        const msgOwner = msg.operator_name ? msg.operator_id === this.$store.getters.USER_ID ? "Вы" : msg.operator_name : "Посетитель";
+        if (msgOwner !== prevMsgOwner) return msgOwner;
+
+        return null;
+      },
       submitForm() {
         if (!this.msg) return;
         let sendMessage = {};
@@ -176,7 +213,15 @@
         const prevMsgDate = prevMsg ? moment(prevMsg.created, "YYYYMMDD") : moment("1970-01-01")
         const msgDate = moment(msg.created, "YYYYMMDD")
         if (msgDate > prevMsgDate){
-          return moment(msg.created).format("DD.MM.YYYY");
+          return moment(msg.created).locale('ru').calendar(null, {
+            sameDay: 'Сегодня', lastDay : 'Вчера', lastWeek: 'D MMMM', sameElse: function() {
+              if (this.year() === new Date().getFullYear()) {
+                return 'D MMMM'
+              } else {
+                return 'D MMMM YYYY';
+              }
+            }
+          });
         }
         return;
       },
@@ -186,6 +231,8 @@
           let file = files[i];
           // выставляем крутилку на скрепку
           let formData = new FormData();
+          console.log("file");
+          console.log(file);
           formData.append('file', file);
           formData.append('filename', file.name);
           axios.post("/api/upload", formData, {headers: {'Content-Type': 'multipart/form-data'}}).then((res) => {
@@ -229,6 +276,9 @@
           return "Y";
         }
         return "N";
+      },
+      isMobile: function() {
+        return this.$isMobile();
       },
     },
     directives: {

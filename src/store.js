@@ -1,18 +1,30 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import router from './router/index'
+import VueSocketIO from 'vue-socket.io';
+import SocketIO from 'socket.io-client';
+import store from './store'
 
 
 
 Vue.use(Vuex);
 
+let socketio;
+
 import axios from "axios";
+axios.defaults.baseURL = process.env.NODE_ENV === "production" ? 'https://ws.sitepower.io' : "/";
+axios.defaults.withCredentials = true;
+axios.defaults.timeout = 30000;
+
 export default new Vuex.Store({
   state: {
     userInfo: {
       isLoggedIn: false,
       name: '',
-      authStatus : ""
+      authStatus : "",
+      admin: "Y",
+      amount: 0,
+      testFormId: ""
     },
     systemInfo: {
       chats : {},
@@ -27,7 +39,9 @@ export default new Vuex.Store({
       activeCategory: "",
       activeOperatorId:"",
       activeChatPrintingTm: "",
-      activeChatPrintingName: ""
+      activeChatPrintingName: "",
+      payStatus: "",
+      payError: ""
     }
   },
 
@@ -41,22 +55,28 @@ export default new Vuex.Store({
     AUTH_STATUS: state => {
       return state.userInfo.authStatus;
     },
+    PAY_STATUS: state => {
+      return state.systemInfo.payStatus;
+    },
+    PAY_ERROR: state => {
+      return state.systemInfo.payError;
+    },
     getChats: state => {
       return state.systemInfo.chats;
     },
-    getForms: state => {
+    FORMS: state => {
       return state.systemInfo.forms;
     },
-    getOperators: state => {
+    OPERATORS: state => {
       return state.systemInfo.operators;
     },
     getActiveChatId: state => {
       return state.systemInfo.activeChatId;
     },
-    getActiveFormId: state => {
+    ACTIVE_FORM_ID: state => {
       return state.systemInfo.activeFormId;
     },
-    getActiveOperatorId: state => {
+    ACTIVE_OPERATOR_ID: state => {
       return state.systemInfo.activeOperatorId;
     },
     getActiveChatPrintingTm: state => {
@@ -67,6 +87,18 @@ export default new Vuex.Store({
     },
     getMessages: state => {
       return state.systemInfo.messages;
+    },
+    getChatsStatus: state => {
+      return state.systemInfo.chatsStatus;
+    },
+    ADMIN: state => {
+      return state.userInfo.admin;
+    },
+    AMOUNT: state => {
+      return state.userInfo.amount;
+    },
+    TEST_FORM_ID: state => {
+      return state.userInfo.testFormId;
     },
 
   },
@@ -82,28 +114,32 @@ export default new Vuex.Store({
       state.userInfo.authStatus = status;
       state.userInfo.authError = error;
     },
+    PAY_STATUS: (state, status, error) => {
+      state.systemInfo.payStatus = status;
+      state.systemInfo.payError = error;
+    },
     initChats: (state, chats) => {
       state.systemInfo.chats = chats;
       if (state.systemInfo.chats && state.systemInfo.chats[0]) {
         state.systemInfo.activeChatId = state.systemInfo.chats[0].sitepower_id;
       }
     },
-    initForms: (state, forms) => {
+    FORMS: (state, forms) => {
       state.systemInfo.forms = forms;
       if (forms && forms[0]) {
         state.systemInfo.activeFormId = forms[0].id;
       }
     },
-    initOperators: (state, operators) => {
+    OPERATORS: (state, operators) => {
       state.systemInfo.operators = operators;
       if (operators && operators[0]) {
-        state.systemInfo.activeOperatorId = operators[0].id;
+        state.systemInfo.activeOperatorId = operators[0].sitepower_id;
       }
     },
-    setActiveFormId: (state, id) => {
+    ACTIVE_FORM_ID: (state, id) => {
       state.systemInfo.activeFormId = id;
     },
-    setActiveOperatorId: (state, id) => {
+    ACTIVE_OPERATOR_ID: (state, id) => {
       state.systemInfo.activeOperatorId = id;
     },
 
@@ -154,6 +190,9 @@ export default new Vuex.Store({
     },
     MESSAGES: (state, messages) => state.systemInfo.messages = messages,
     LAST_ID: (state, id) => state.systemInfo.lastId = id,
+    ADMIN: (state, flag) => state.userInfo.admin = flag,
+    AMOUNT:(state, amount) => state.userInfo.amount = amount,
+    TEST_FORM_ID:(state, id) => state.userInfo.testFormId = id,
   },
 
   actions: {
@@ -179,6 +218,21 @@ export default new Vuex.Store({
         })
       })
     },
+    SOCKET_LOGIN: ({commit, state, dispatch}, props) => {
+      if (!socketio) {
+        socketio = new VueSocketIO({
+          debug: true,
+          connection: SocketIO(axios.defaults.baseURL, {path:'/socket.io'}),
+          vuex: {
+            store,
+            actionPrefix: 'socket_',
+            mutationPrefix: 'socket_'
+          },
+        });
+        Vue.use(socketio);
+      }
+
+    },
     MESSAGES_REQUEST: ({commit, state, dispatch}, props) => {
       return new Promise((resolve, reject) => {
         commit('MESSAGES_STATUS', "Loading");
@@ -198,11 +252,18 @@ export default new Vuex.Store({
           commit('AUTH_STATUS', "Success")
           commit('USER_LOGGED_IN', true);
           commit('USER_NAME', res.data.name);
+          commit('AMOUNT', res.data.days_amount);
+          commit('TEST_FORM_ID', res.data.test_form_id);
+          dispatch('SOCKET_LOGIN');
+          if (res.data.parent_sitepower_id) {
+            commit('ADMIN', "N");
+          }
           resolve();
         }).catch((err) => {
           commit('AUTH_STATUS', "Error")
           commit('USER_LOGGED_IN', false);
           commit('USER_NAME', "");
+
           reject(err);
         });
       });
@@ -214,6 +275,9 @@ export default new Vuex.Store({
           commit('AUTH_STATUS', "Success")
           commit('USER_LOGGED_IN', true);
           commit('USER_NAME', res.data.name);
+          commit('AMOUNT', res.data.days_amount);
+          commit('TEST_FORM_ID', res.data.test_form_id);
+          dispatch('SOCKET_LOGIN');
           resolve();
         }).catch((err) => {
           commit('AUTH_STATUS', "Error")
@@ -229,7 +293,15 @@ export default new Vuex.Store({
         axios.get("/api/user").then((res) => {
           commit('AUTH_STATUS', "Success")
           commit('USER_LOGGED_IN', true);
+          console.log(res.data.user);
           commit('USER_NAME', res.data.user.name);
+          commit('AMOUNT', res.data.user.days_amount);
+          commit('TEST_FORM_ID', res.data.user.test_form_id);
+          dispatch('SOCKET_LOGIN');
+          if (res.data.user.parent_sitepower_id) {
+            commit('ADMIN', "N");
+          }
+
           resolve();
         }).catch((err) => {
           commit('AUTH_STATUS', "Error")
@@ -246,6 +318,10 @@ export default new Vuex.Store({
           commit('AUTH_STATUS', "Success")
           commit('USER_LOGGED_IN', false);
           commit('USER_NAME', "");
+          if (socketio) {
+            socketio = null;
+          };
+
           resolve();
         }).catch((err) => {
           commit('AUTH_STATUS', "Error")
@@ -275,9 +351,9 @@ export default new Vuex.Store({
         });
       });
     },
-    SET_ACTIVE_CHAT_SPAM: ({commit, state, dispatch}) => {
+    SET_ACTIVE_CHAT_SPAM: ({commit, state, dispatch}, val) => {
       return new Promise((resolve, reject) => {
-        axios.post("/api/chat/" + state.systemInfo.activeChatId, {class:"SPAM"}).then((res) => {
+        axios.post("/api/chat/" + state.systemInfo.activeChatId, {class:val}).then((res) => {
           commit('ACTIVE_CHAT_SPAM')
           if (state.systemInfo.chats && Object.keys(state.systemInfo.chats)[0]) {
             commit('ACTIVE_CHAT_ID', Object.keys(state.systemInfo.chats)[0]);
@@ -308,6 +384,81 @@ export default new Vuex.Store({
         });
       });
     },
+    BLOCK_OPERATOR: ({commit, state, dispatch}, block) => {
+      return new Promise((resolve, reject) => {
+        axios.post("/api/operator/" + state.systemInfo.activeOperatorId + "/block", {block}).then((res) => {
+          dispatch('OPERATORS');
+          resolve();
+        }).catch((err) => {
+          reject(err);
+        });
+      });
+    },
+    FORMS: ({commit, state, dispatch}, item) => {
+      return new Promise((resolve, reject) => {
+        axios.get("/api/forms").then((res) => {
+          let forms = res.data;
+          forms.sort((a,b)=> {
+            if (a.created < b.created) return 1
+            else if (a.created > b.created) return -1
+            else return 0
+          });
+          commit('FORMS', forms);
+          resolve();
+        }).catch((err) => {
+          reject(err);
+        })
+      });
+    },
+    OPERATORS: ({commit, state, dispatch}, item) => {
+      return new Promise((resolve, reject) => {
+        axios.get("/api/operators").then((res) => {
+          let operators = res.data;
+          commit('OPERATORS', operators);
+          resolve();
+        }).catch((err) => {
+          reject(err);
+        })
+      });
+    },
+    FORM: ({commit, state, dispatch}, form) => {
+      return new Promise((resolve, reject) => {
+        axios.post("/api/form/" + state.systemInfo.activeFormId, {color:form.color, gradient:form.gradient, label:form.label, position:form.position, message_placeholder:form.message_placeholder}).then((res) => {
+          dispatch('FORMS');
+          resolve();
+        }).catch((err) => {
+          reject(err)
+        })
+      });
+    },
+    FORM_CREATE: ({commit, state, dispatch}, origin) => {
+      return new Promise((resolve, reject) => {
+        axios.post("/api/form/", {origin}).then((res) => {
+          dispatch('FORMS');
+          resolve();
+        }).catch((err) => {
+          reject(err)
+        })
+      });
+    },
+    PAY: ({commit, state, dispatch}, payment) => {
+      return new Promise((resolve, reject) => {
+        commit('PAY_STATUS', "Loading");
+        axios.post("/api/pay/", payment).then((res) => {
+          commit('PAY_STATUS', "Success");
+          resolve(res);
+        }).catch((err) => {
+          commit('PAY_STATUS', "Error", err.message);
+          reject(err)
+        })
+      });
+    },
+
+
+
+
+
+
     socket_receive: ({commit, state, dispatch}, receive_msg) => {
       console.log("receive");
       const msg = receive_msg.msg;
@@ -324,9 +475,9 @@ export default new Vuex.Store({
         chatId === state.systemInfo.activeChatId ? state.systemInfo.messages.push(msg) : null;
         // 2. Обновляем состояние чата
         Object.assign(state.systemInfo.chats[chatId], chat);
-        // 3. пересортировка чатов
       } else {
-        dispatch('CHATS_REQUEST');
+        state.systemInfo.chats = Object.assign({chatId : chat}, state.systemInfo.chats);
+        Vue.set(state.systemInfo.chats, chatId, chat);
       }
 
       /* уведомление */
@@ -344,8 +495,9 @@ axios.interceptors.response.use(response => {
   return response;
 }, error => {
   if (error.response.status === 401) {
-    router.push({name : 'Login'});
+    router.push({name : 'Home'});
   }
   return Promise.reject(error);
 });
+
 

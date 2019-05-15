@@ -16,10 +16,13 @@
                 </div>
                 <div class="form-group mb-0">
                   <label for="password">Пароль</label>
-                  <input type="password" class="form-control" required id="password" placeholder="" v-model="password">
+                  <input type="password" class="form-control" required id="password" placeholder="your password" v-model="password">
                 </div>
                 <router-link class="md-fp" to="/reset">Забыли пароль?</router-link>
-                <button class="btn btn-black w-100" >Вход</button>
+                <button class="btn btn-black w-100" >
+                  <span v-if="status !== 'Loading'">Вход</span>
+                  <div v-else class="spinner-border" role="status"></div>
+                </button>
                 <router-link class="md-su" to="/registration">Зарегистрироваться!</router-link>
                 <div v-if="loginError" class="level"><p class="text-danger">{{ loginError }}</p></div>
               </form>
@@ -51,8 +54,14 @@
           .then(() => this.$router.push({name: 'Chats'}))
           .catch(err => {
             this.loginError = (err.response && err.response.status === 400) ? "Неверное имя пользователя или пароль" : "Ошибка сервера"
+            console.log(err.message);
           });
       },
+    },
+    computed: {
+      status() {
+        return this.$store.getters.AUTH_STATUS;
+      }
     }
   };
 </script>

@@ -13,12 +13,18 @@ export default {
     }
   },
   beforeMount() {
-    this.$store.dispatch('AUTH_USER')
-      .then(() => {
-        this.isDataLoaded = true;
-        this.$router.push({name: 'Chats'})
-      })
-      .catch(() => this.isDataLoaded = true);
+    let path = this.$router.history.current.path.split("/")[1];
+    if (path === "" || path === "login" || path === "private") {
+      this.$store.dispatch('AUTH_USER')
+        .then(() => {
+          this.isDataLoaded = true;
+          this.$router.push({name: 'Chats'})
+        })
+        .catch(() => this.isDataLoaded = true);
+    } else {
+      this.isDataLoaded = true
+    }
+
   }
 }
 </script>

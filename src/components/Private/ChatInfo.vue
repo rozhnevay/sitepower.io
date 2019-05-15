@@ -9,6 +9,7 @@
     <div class="overflow-auto">
       <div class="information">
         <span class="title">Информация</span>
+        <p class="items" v-if="chat.origin">Канал: {{chat.origin}}</p>
         <p class="items" v-if="chat.region">Регион: {{chat.region}}</p>
         <p class="items" v-if="chat.login">Email: {{chat.login}}</p>
         <p class="items" v-if="chat.phone">Телефон: {{chat.phone}}</p>
@@ -20,6 +21,7 @@
 
           <button class="btn btn-blue" data-target="#chatsend" data-toggle="modal" @click="send">Отправить диалог на email</button>
           <button class="btn btn-blue" data-target="#chatinfo" data-toggle="modal" @click="showChatInfoModal">Добавить контакты</button>
+          <button class="btn btn-red" @click="setDeleted">Удалить</button>
           <button class="btn btn-red" @click="setSpam">В спам!</button>
         </div>
       </div>
@@ -53,7 +55,10 @@
         this.$store.dispatch('SET_ACTIVE_CHAT_CATEGORY', name).then().catch(err => console.log(err)); /* TODO - заглушка*/
       },
       setSpam() {
-        this.$store.dispatch('SET_ACTIVE_CHAT_SPAM').then().catch(err => console.log(err)); /* TODO - заглушка*/
+        this.$store.dispatch('SET_ACTIVE_CHAT_SPAM', "SPAM").then().catch(err => console.log(err)); /* TODO - заглушка*/
+      },
+      setDeleted() {
+        this.$store.dispatch('SET_ACTIVE_CHAT_SPAM', "DELETED").then().catch(err => console.log(err)); /* TODO - заглушка*/
       },
       send() {
         this.$store.dispatch('ACTIVE_CHAT_SEND').then().catch(err => console.log(err)); /* TODO - заглушка*/

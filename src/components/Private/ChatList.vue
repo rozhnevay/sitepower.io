@@ -1,6 +1,6 @@
 
 <template>
-      <div class="left-side">
+  <div class="left-side">
 
   <!--        <div class="input-group pr-3 pl-3 mt-2 mb-2">
             <input type="text" class="form-control search" placeholder="Search...">
@@ -33,11 +33,14 @@
               </div>
               <div class="status">
                 <!--<span v-if="chat.sitepower_id === activeChatId" class="badge badge-light">NOW </span>-->
-                <span v-if="chat.cnt_unanswered > 0" class="badge badge-danger">NEW <span  class="badge badge-light" style="padding:inherit">{{chat.cnt_unanswered}}</span></span>
+                <span v-if="chat.cnt_unanswered > 0" class="badge badge-danger" style="width: max-content;">NEW <span  class="badge badge-light" style="padding:inherit">{{chat.cnt_unanswered}}</span></span>
                 <!--<small class="text-muted">{{chat.lastMessage().created | moment("HH:mm")}}</small>-->
                 <!--<small class="text-muted">{{chat.last_msg_created | moment('calendar', null, { sameDay: 'HH:mm', lastDay : 'DD.MM.YYYY HH:mm', lastWeek: 'DD.MM.YYYY HH:mm', sameElse: 'DD.MM.YYYY HH:mm'})}}</small>-->
-                <small class="text-muted">{{chat.last_msg_created | moment('calendar', null, { sameDay: 'HH:mm', lastDay : 'DD.MM.YYYY', lastWeek: 'DD.MM.YYYY', sameElse: 'DD.MM.YYYY'})}}</small>
+                <div>
+                  <small class="text-muted">{{formatDate(chat.last_msg_created)}}</small>
+                </div>
               </div>
+
             </div>
 
            </div>
@@ -47,11 +50,10 @@
 <script>
 
   import infiniteScroll from 'vue-infinite-scroll';
-
+  import moment from 'moment';
 
   import Vue from 'vue';
   Vue.use(require('vue-moment'));
-  import moment from 'moment';
   export default {
     name: 'Chat',
     data () {
@@ -59,14 +61,11 @@
         busy: false
       }
     },
-    mounted() {
-      this.$store.dispatch('CHATS_REQUEST', {/*тип запроса*/})
-        .then(() => this.$store.dispatch('MESSAGES_REQUEST').then().catch( err => console.log(err.message)))
-        .catch(err => console.log(err.message) /* TODO Заглушка!!!*/);
-
-    },
     methods: {
       openChat(chat) {
+        console.log("chat");
+        console.log(chat);
+        console.log(chat.sitepower_id);
         this.$store.commit('ACTIVE_CHAT_ID', chat.sitepower_id);
         this.$root.$emit("chat_open");
         if (this.$isMobile()) {
@@ -82,15 +81,30 @@
           .then()
           .catch(err => console.log(err.message) /* TODO Заглушка!!!*/);
         this.busy = false;
+      },
+      formatDate(dat){
+        return moment(dat).locale('ru').calendar(null, {
+          sameDay: 'Сегодня, HH:mm', lastDay : 'Вчера', lastWeek: 'D MMMM', sameElse: function() {
+            if (this.year() === new Date().getFullYear()) {
+              return 'D MMMM'
+            } else {
+              return 'D MMMM YYYY';
+            }
+          }
+        });
       }
     },
+
     computed: {
       chats() {
         return this.$store.getters.getChats;
       },
       activeChatId() {
         return this.$store.getters.getActiveChatId;
-      }
+      },
+      isMobile: function() {
+        return this.$isMobile();
+      },
     },
     directives: {infiniteScroll}
   }
