@@ -41,7 +41,8 @@ export default new Vuex.Store({
       activeChatPrintingTm: "",
       activeChatPrintingName: "",
       payStatus: "",
-      payError: ""
+      payError: "",
+      component: "chat-list-component"
     }
   },
 
@@ -100,7 +101,9 @@ export default new Vuex.Store({
     TEST_FORM_ID: state => {
       return state.userInfo.testFormId;
     },
-
+    COMPONENT: state => {
+      return state.systemInfo.component;
+    },
   },
   mutations: {
     USER_LOGGED_IN: (state, isUserLoggedIn) => {
@@ -193,6 +196,7 @@ export default new Vuex.Store({
     ADMIN: (state, flag) => state.userInfo.admin = flag,
     AMOUNT:(state, amount) => state.userInfo.amount = amount,
     TEST_FORM_ID:(state, id) => state.userInfo.testFormId = id,
+    COMPONENT:(state, comp) => state.systemInfo.component = comp,
   },
 
   actions: {
@@ -483,8 +487,14 @@ export default new Vuex.Store({
       /* уведомление */
       if (msg.direction === "to_user") {
         if (Notification.permission === "granted") {
-          let notification = new Notification(chat.name, {body: msg.body});
-          notification.onclick = () => console.log("click");
+          let notification = new Notification(chat.name, {body: msg.body, icon:"https://app.sitepower.io/static/icon-square_144.png"});
+          notification.onclick = () => {
+            try {
+              window.focus();
+              this.cancel();
+            }
+            catch (ex) {}
+          };
         }
       }
     },

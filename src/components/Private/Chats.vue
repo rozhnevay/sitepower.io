@@ -31,8 +31,9 @@
         </div>
       </div>
     </div>
-    <div class="main" v-if="isMobile">
-        <chat-list-component></chat-list-component>
+    <div v-if="isMobile" class="main">
+        <!--<chat-list-component></chat-list-component>-->
+        <component v-bind:is="currentChatComponent"></component>
     </div>
   </div>
 </template>
@@ -64,15 +65,19 @@
       testFormId() {
         const domain = process.env.NODE_ENV === "production" ? 'https://ws.sitepower.io' : 'http://localhost:3000';
         return domain + '/page/' + this.$store.getters.TEST_FORM_ID;
+      },
+      currentChatComponent() {
+        return this.$store.getters.COMPONENT;
       }
 
     },
     mounted() {
       const host = process.env.NODE_ENV === "production" ? 'https://ws.sitepower.io' : 'localhost:3000';
 
+      /*
       if (this.$isMobile()) {
         this.$router.push({name: 'ChatList'})
-      }
+      }*/
 
       this.$store.dispatch('CHATS_REQUEST', {/*тип запроса*/})
           .then(() => this.$store.dispatch('MESSAGES_REQUEST').then().catch( err => console.log(err.message)))

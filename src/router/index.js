@@ -92,6 +92,7 @@ export default new Router({
       ],
       beforeEnter: ifAuthenticated
     },
+    //{ path: '/static/*'},
     { path: '/404', component: NotFound },
     { path: '*', redirect: '/404' },
 

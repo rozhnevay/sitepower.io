@@ -69,7 +69,8 @@
         this.$store.commit('ACTIVE_CHAT_ID', chat.sitepower_id);
         this.$root.$emit("chat_open");
         if (this.$isMobile()) {
-          this.$router.push({name: 'ChatBody'})
+          // this.$router.push({name: 'ChatBody'})
+          this.$store.commit("COMPONENT", 'chat-body-component');
         }
       },
       getChatClass(chat) {

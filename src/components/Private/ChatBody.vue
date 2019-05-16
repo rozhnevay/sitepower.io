@@ -169,6 +169,7 @@
     //   }
     // },
     methods: {
+
       ownerSeparator(msg, index){
         const prevMsg = this.messages[index-1]
 
