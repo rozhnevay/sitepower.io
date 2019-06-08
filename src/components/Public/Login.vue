@@ -1,5 +1,5 @@
 <template>
-  <div class="modal-show">
+  <div class="modal-show" v-if="isDataLoaded">
     <div class="modal" id="login" tabindex="-1" role="dialog">
       <div class="modal-dialog modal-login modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -44,7 +44,8 @@
       return {
         email : '',
         password : '',
-        loginError: ''
+        loginError: '',
+        isDataLoaded: false
       };
     },
     methods: {
@@ -62,6 +63,13 @@
       status() {
         return this.$store.getters.AUTH_STATUS;
       }
+    },
+    beforeMount () {
+      this.$store.dispatch('AUTH_USER')
+        .then(() => {
+          this.$router.push({path: "/private/chats"});
+        })
+        .catch(() => {this.isDataLoaded = true;})
     }
   };
 </script>

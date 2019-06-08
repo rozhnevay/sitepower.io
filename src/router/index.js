@@ -10,6 +10,7 @@ import Chats from '../components/Private/Chats';
 
 import ChatList from '../components/Private/ChatList';
 import ChatBody from '../components/Private/ChatBody';
+import Vk from '../components/Private/Vk';
 
 import Login from '../components/Public/Login';
 import Registration from '../components/Public/Registration';
@@ -20,11 +21,11 @@ import NotFound from '../components/Public/NotFound';
 import store from '../store' // your vuex store
 
 const ifAuthenticated = (to, from, next) => {
-  if (store.getters.USER_LOGGED_IN) {
-    next()
-    return
-  }
-  next('/')
+  store.dispatch('AUTH_USER')
+    .then(() => {
+        next()
+    })
+    .catch(() => next('/login'));
 }
 
 Vue.use(Router)
@@ -34,7 +35,7 @@ export default new Router({
     {
       path: "/",
       name: 'Home',
-      component: Login,
+      component: Login
     },
     {
       path: "/login",
@@ -65,6 +66,11 @@ export default new Router({
           path: "admin",
           name: 'Administration',
           component: Administration,
+        },
+        {
+          path: "vk",
+          name: 'Vk',
+          component: Vk,
         },
         {
           path: "payments",

@@ -1110,6 +1110,32 @@
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2F324C', endColorstr='#424869',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
 }
 
+.nav-tabs>li>a.active,
+.nav-tabs>li>a.active:focus,
+.nav-tabs>li>a.active:hover {
+  color: #555;
+  cursor: default;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-bottom-color: transparent;
+}
+
+.nav>li>a {
+  position: relative;
+  display: block;
+  padding: 10px 15px;
+}
+
+.nav-tabs>li>a {
+  margin-right: 2px;
+  line-height: 1.42857143;
+  border-radius: 4px 4px 0 0;
+}
+
+.nav>li>a:focus, .nav>li>a:hover {
+  text-decoration: none;
+}
+
 .quicklink {
   margin-left: 10px;
   float: right;

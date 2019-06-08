@@ -15,13 +15,14 @@
                <div class="text">
                 <span class="title">{{form.origin}}</span>
                  <div v-if="form.test === 'Y'" class="message">Тестовая форма</div>
+                 <div v-if="form.type === 'vk'" class="message">VK группа</div>
                  <div v-else class="message">Чат на сайте</div>
                </div>
              </div>
            </div>
          </div>
        </div>
-       <div class="center ws">
+       <div class="center ws" >
          <div class="container">
            <div class="row mt-4">
              <div class="col-lg-12 d-flex justify-content-between">
@@ -93,7 +94,7 @@
                    <button type="button" class="btn btn-light btn-md save-button" :class="!enableApply ? 'disabled' : ''" @click="saveForm">Применить</button>
                  </div>
                </div>
-             <div class="row mt-3 text-muted">
+             <div class="row mt-3 text-muted m-2">
                <p class="">В нижней части экрана можно посмотреть, как будет выглядеть Ваш виджет. Для сохранения настроек нажмите "Применить".</p>
                <p class="">Протестируйте диалог с <a :href="testFormId" target="_blank">тестовой страницы</a></p>
              </div>

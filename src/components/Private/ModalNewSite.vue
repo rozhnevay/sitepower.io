@@ -9,14 +9,35 @@
           </div>
 
           <div class="md-main">
-            <form @submit="checkForm" action="#" method="POST">
-              <div class="form-group">
-                <label for="name">Укажите адрес Вашего сайта</label>
-                <input type="name" class="form-control" id="name" required placeholder="sitepower.io" v-model="origin">
-                <p class="text-muted">Укажите без "http://" и "www"</p>
+            <!--<form @submit="checkForm" action="#" method="POST">-->
+
+              <div class="container">
+                <ul class="nav nav-tabs">
+                  <li><a class="active" data-toggle="tab" href="#newsite-chat" @click="setType('chat')">Чат на сайте</a></li>
+                  <li><a data-toggle="tab" href="#newsite-vk" @click="setType('vk')">Вконтакте</a></li>
+                  <li><a data-toggle="tab" href="#newsite-fb" @click="setType('fb')">Facebook</a></li>
+                </ul>
+
+                <div class="tab-content">
+                  <div id="newsite-chat" class="tab-pane active">
+                    <div class="form-group">
+                      <label for="name">Укажите адрес Вашего сайта</label>
+                      <input type="name" class="form-control" id="name" required placeholder="sitepower.io" v-model="origin">
+                      <p class="text-muted">Укажите без "http://" и "www"</p>
+                    </div>
+                  </div>
+                  <div id="newsite-vk" class="tab-pane fade">
+                    <h5>Общайтесь с пользователями Вконтакте напрямую из приложения</h5>
+                    <p>Нажмите "Добавить" для подключения группы VK</p>
+                  </div>
+                  <div id="newsite-fb" class="tab-pane fade">
+                    <h5>Общайтесь с пользователями Facebook напрямую из приложения</h5>
+                    <p>Нажмите "Добавить" для подключения группы Fb</p>
+                  </div>
+                </div>
               </div>
-              <button class="btn btn-black mt-20 w-100">Добавить</button>
-            </form>
+              <button @click="checkForm" class="btn btn-black mt-20 w-100">Добавить</button>
+            <!--</form>-->
 
           </div>
 
@@ -28,37 +49,27 @@
 
 <script>
   import * as jquery from 'jquery';
-  import axios from "axios";
   export default {
     name: 'ModalNewSite',
     data () {
       return {
-        origin: ''
+        origin: '',
+        type: 'chat'
       };
     },
     methods: {
+      setType(tip) {
+        this.type = tip;
+      },
       checkForm (e) {
         e.preventDefault();
-        /*axios.post("/api/form", {origin:this.origin}).then(() => {
-          axios.get("/api/forms").then((res) => {
-            let forms = res.data;
+        if (this.type === "chat") {
+          this.$store.dispatch('FORM_CREATE', this.origin);
+          this.$root.$emit("newsite_added");
+        } else if (this.type === "vk"){
+           window.location.replace('https://oauth.vk.com/authorize?client_id=7003708&display=page&redirect_uri=https://app.sitepower.io/private/vk&scope=groups,offline&response_type=token&v=5.95&state=123456');
+        }
 
-            forms.sort((a,b)=> {
-              if (a.created < b.created) return 1
-              else if (a.created > b.created) return -1
-              else return 0
-            });
-            this.$store.commit('initForms', forms);
-            this.$root.$emit("newsite_added");
-          }).catch((err) => {
-            console.log("Error in getting chats: ", err.message)
-          })
-        }).catch((err) => {
-          console.log("Error in creating form: ", err.message)
-        })*/
-
-        this.$store.dispatch('FORM_CREATE', this.origin);
-        this.$root.$emit("newsite_added");
 
         jquery('#newsite').modal('hide');
         jquery('body').removeClass('modal-open');

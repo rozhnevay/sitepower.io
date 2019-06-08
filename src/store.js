@@ -457,12 +457,33 @@ export default new Vuex.Store({
         })
       });
     },
-
-
-
-
-
-
+    VK_GET_GROUPS: ({commit, state, dispatch}, token) => {
+      return new Promise((resolve, reject) => {
+        axios.get("/api/vk/groups/" + token).then((res) => {
+          resolve(res.data);
+        }).catch((err) => {
+          reject(err)
+        })
+      });
+    },
+    VK_CREATE_FORM_GROUP: ({commit, state, dispatch}, obj) => {
+      return new Promise((resolve, reject) => {
+        axios.post("/api/vk/group", obj).then((res) => {
+          resolve(res.data);
+        }).catch((err) => {
+          reject(err)
+        })
+      });
+    },
+    VK_COMPLETE: ({commit, state, dispatch}, obj) => {
+      return new Promise((resolve, reject) => {
+        axios.get("/api/vk/group/" + obj.id + "/" + obj.code).then((res) => {
+          resolve(res.data);
+        }).catch((err) => {
+          reject(err)
+        })
+      });
+    },
     socket_receive: ({commit, state, dispatch}, receive_msg) => {
       console.log("receive");
       const msg = receive_msg.msg;

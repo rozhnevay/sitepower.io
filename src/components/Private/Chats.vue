@@ -22,16 +22,16 @@
       <chat-info-component></chat-info-component>
     </div>
     <div :class="[ isMobile ?  'main' : '' ]" v-if="Object.keys(chats).length === 0 && status !== 'Loading'">
-      <div class="row">
-        <div class="text-center stub">
+      <div class="row m-0">
+        <div class="col-12 text-center stub">
           <p>Пока у Вас нет ни одного сообщения. Как только у Вас появится активный диалог, он отобразится на этом экране</p>
           <hr>
           <p>А пока, Вы можете отправить сообщение с <a :href="testFormId" target="_blank">тестовой страницы</a>.</p>
-          <img src="../../assets/happy.svg" alt="">
+          <img src="../../assets/happy.svg" style="max-width: 90%;" alt="">
         </div>
       </div>
     </div>
-    <div v-if="isMobile" class="main">
+    <div v-if="isMobile && Object.keys(chats).length > 0" class="main">
         <!--<chat-list-component></chat-list-component>-->
         <component v-bind:is="currentChatComponent"></component>
     </div>
