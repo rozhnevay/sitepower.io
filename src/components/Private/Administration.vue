@@ -35,9 +35,9 @@
                <div class="form-group col-md-3">
                  <span class="subtitle">Установите цвет</span>
                  <div class="form-check form-check-inline">
-                   <input class="form-check-input" type="radio" checked name="setup_colors" id="radio_color" value="0" v-model="gradient">
-                   <label class="form-check-label" for="radio_color">Один цвет</label>
-                 </div>
+                 <input class="form-check-input" type="radio" checked name="setup_colors" id="radio_color" value="0" v-model="gradient">
+                 <label class="form-check-label" for="radio_color">Один цвет</label>
+               </div>
                  <div class="form-check form-check-inline">
                    <input class="form-check-input" type="radio" name="setup_colors" id="radio_gradient" value="1" v-model="gradient">
                    <label class="form-check-label" for="radio_gradient">Градиент</label>
@@ -105,7 +105,7 @@
        <div class="right-side ws">
          <div class="mt-3" style="display: inline-block;" >
          <span class="title">Код виджета</span>
-         <!--<a class="quicklink" @click.stop.prevent="copyCode">Скопировать</a>-->
+         <a class="quicklink" @click.stop.prevent="copyCode">Скопировать</a>
          </div>
          <textarea class="form-control" rows="9" disabled id="adminscript">{{script}}</textarea>
          <p class="text">Пожалуйста, установите данный код на Ваш сайт. Это необходимо для начала работы с сервисом.</p>
@@ -298,6 +298,15 @@
       },
       setColor(color) {
         this.color = color;
+      },
+      copyCode() {
+        let input = document.createElement('input');
+        input.value = document.getElementById('adminscript').textContent;
+        input.id = 'inputID';
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand('copy');
+        document.body.removeChild(input);
       },
       titleClass(mode) {
         let classes = this.gradient === '0' ? 'collapse_color color-' + this.color : 'collapse_gradient color-' + this.color;

@@ -37,7 +37,7 @@
     <div class="input">
 
       <div class="left">
-        <div class="pin-file" title="Прикрепить вложение">
+        <div class="pin-file" title="Прикрепить вложение" v-if="chat.type==='site'">
           <input type="file" name="file[]" id="file" ref="file" v-on:change="handleFileUpload()" class="inputfile inputfile-5" hidden data-multiple-caption="{count} files selected" multiple />
           <label for="file"><img src="../../assets/files.svg" alt=""></label>
         </div>
@@ -267,6 +267,9 @@
           return chat[0].lastOpenDt;
         }
         return null;
+      },
+      chat () {
+        return this.$store.getters.getChats[this.getId];
       },
       getCustomEmo () {
         return customEmo;

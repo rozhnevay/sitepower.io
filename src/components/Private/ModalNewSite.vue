@@ -15,7 +15,6 @@
                 <ul class="nav nav-tabs">
                   <li><a class="active" data-toggle="tab" href="#newsite-chat" @click="setType('chat')">Чат на сайте</a></li>
                   <li><a data-toggle="tab" href="#newsite-vk" @click="setType('vk')">Вконтакте</a></li>
-                  <li><a data-toggle="tab" href="#newsite-fb" @click="setType('fb')">Facebook</a></li>
                 </ul>
 
                 <div class="tab-content">
@@ -30,10 +29,10 @@
                     <h5>Общайтесь с пользователями Вконтакте напрямую из приложения</h5>
                     <p>Нажмите "Добавить" для подключения группы VK</p>
                   </div>
-                  <div id="newsite-fb" class="tab-pane fade">
-                    <h5>Общайтесь с пользователями Facebook напрямую из приложения</h5>
-                    <p>Нажмите "Добавить" для подключения группы Fb</p>
-                  </div>
+                  <!--<div id="newsite-fb" class="tab-pane fade">-->
+                    <!--<h5>Общайтесь с пользователями Facebook напрямую из приложения</h5>-->
+                    <!--<p>Нажмите "Добавить" для подключения группы Fb</p>-->
+                  <!--</div>-->
                 </div>
               </div>
               <button @click="checkForm" class="btn btn-black mt-20 w-100">Добавить</button>
