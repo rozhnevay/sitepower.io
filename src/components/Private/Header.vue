@@ -8,7 +8,7 @@
         <ul>
           <li :class="[ activeComponent == 'Chats' ?  'active' : '' ]"><router-link to="chats">Диалоги</router-link></li>
           <li :class="[ activeComponent == 'Administration' ?  'active' : '' ]" v-if="admin === 'Y'"><router-link to="admin">Настройки</router-link></li>
-          <li :class="[ activeComponent == 'Payments' ?  'active' : '' ]" v-if="admin === 'Y'"><router-link to="payments">Оплата <span class="badge" :class="[ amount <= 5 ?  'badge-danger' : 'badge-warning' ]">{{left}} {{amount}} {{day}}</span></router-link></li>
+          <li :class="[ activeComponent == 'Payments' ?  'active' : '' ]" v-if="admin === 'Y'"><router-link to="payments">Оплата <span class="badge" :class="[ amount <= 5 ?  'badge-danger' : 'badge-warning' ]" v-if="amount < 30">{{left}} {{amount}} {{day}}</span></router-link></li>
         </ul>
       </div>
         <div  class="navbar navbar-expand-lg navbar-dark">
