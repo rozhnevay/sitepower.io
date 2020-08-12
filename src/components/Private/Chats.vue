@@ -63,7 +63,7 @@
         return this.$store.getters.getChatsStatus;
       },
       testFormId() {
-        const domain = process.env.NODE_ENV === "production" ? 'https://ws.sitepower.io' : 'http://localhost:3000';
+        const domain = process.env.NODE_ENV === "production" ? 'https://ws.sitepower.io' : 'http://localhost:8080';
         return domain + '/page/' + this.$store.getters.TEST_FORM_ID;
       },
       currentChatComponent() {
@@ -72,7 +72,7 @@
 
     },
     mounted() {
-      const host = process.env.NODE_ENV === "production" ? 'https://ws.sitepower.io' : 'localhost:3000';
+      const host = process.env.NODE_ENV === "production" ? 'https://ws.sitepower.io' : 'localhost:8080';
 
       /*
       if (this.$isMobile()) {

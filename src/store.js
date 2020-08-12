@@ -252,10 +252,16 @@ export default new Vuex.Store({
     AUTH_LOGIN: ({commit, state, dispatch}, props) => {
       return new Promise((resolve, reject) => {
         commit('AUTH_STATUS', "Loading");
-        axios.post("/api/login", props).then((res) => {
+        console.log(props)
+        axios.post("/api/auth/login", {}, {
+          auth: {
+            username: props.email,
+            password: props.password
+          }
+        }).then((res) => {
           commit('AUTH_STATUS', "Success")
           commit('USER_LOGGED_IN', true);
-          commit('USER_NAME', res.data.name);
+          commit('USER_NAME', res.data.login);
           commit('AMOUNT', res.data.days_amount);
           commit('TEST_FORM_ID', res.data.test_form_id);
           dispatch('SOCKET_LOGIN');
@@ -294,15 +300,14 @@ export default new Vuex.Store({
     AUTH_USER: ({commit, state, dispatch}, props) => {
       return new Promise((resolve, reject) => {
         commit('AUTH_STATUS', "Loading");
-        axios.get("/api/user").then((res) => {
+        axios.get("/api/auth/user").then((res) => {
           commit('AUTH_STATUS', "Success")
           commit('USER_LOGGED_IN', true);
-          console.log(res.data.user);
-          commit('USER_NAME', res.data.user.name);
-          commit('AMOUNT', res.data.user.days_amount);
-          commit('TEST_FORM_ID', res.data.user.test_form_id);
+          commit('USER_NAME', res.data.login);
+          commit('AMOUNT', res.data.days_amount);
+          commit('TEST_FORM_ID', res.data.test_form_id);
           dispatch('SOCKET_LOGIN');
-          if (res.data.user.parent_sitepower_id) {
+          if (res.data.parent_sitepower_id) {
             commit('ADMIN', "N");
           }
 
@@ -318,19 +323,27 @@ export default new Vuex.Store({
     AUTH_LOGOUT: ({commit, state, dispatch}) => {
       return new Promise((resolve, reject) => {
         commit('AUTH_STATUS', "Loading");
-        axios.get("/api/logout").then((res) => {
-          commit('AUTH_STATUS', "Success")
-          commit('USER_LOGGED_IN', false);
-          commit('USER_NAME', "");
-          if (socketio) {
-            socketio = null;
-          };
-
-          resolve();
-        }).catch((err) => {
-          commit('AUTH_STATUS', "Error")
-          reject(err);
-        });
+        commit('AUTH_STATUS', "Success")
+        commit('USER_LOGGED_IN', false);
+        commit('USER_NAME', "");
+        if (socketio) {
+          socketio = null;
+        };
+        resolve();
+        axios.get("/api/logout");
+        // axios.get("/api/logout").then((res) => {
+        //   commit('AUTH_STATUS', "Success")
+        //   commit('USER_LOGGED_IN', false);
+        //   commit('USER_NAME', "");
+        //   if (socketio) {
+        //     socketio = null;
+        //   };
+        //
+        //   resolve();
+        // }).catch((err) => {
+        //   commit('AUTH_STATUS', "Error")
+        //   reject(err);
+        // });
       });
     },
     AUTH_RESET: ({commit, state, dispatch}, props) => {

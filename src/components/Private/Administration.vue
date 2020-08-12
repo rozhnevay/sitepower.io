@@ -343,7 +343,7 @@
         return null;
       },
       testFormId() {
-        const domain = process.env.NODE_ENV === "production" ? 'https://ws.sitepower.io' : 'http://localhost:3000';
+        const domain = process.env.NODE_ENV === "production" ? 'https://ws.sitepower.io' : 'http://localhost:8080';
         return domain + '/page/' + this.$store.getters.TEST_FORM_ID;
       }
     },
