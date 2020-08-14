@@ -24,7 +24,8 @@ export default new Vuex.Store({
       authStatus : "",
       admin: "Y",
       amount: 0,
-      testFormId: ""
+      testFormId: "",
+      id: ""
     },
     systemInfo: {
       chats : {},
@@ -52,6 +53,9 @@ export default new Vuex.Store({
     },
     USER_NAME: state => {
       return state.userInfo.name;
+    },
+    USER_ID: state => {
+      return state.userInfo.id;
     },
     AUTH_STATUS: state => {
       return state.userInfo.authStatus;
@@ -112,6 +116,9 @@ export default new Vuex.Store({
 
     USER_NAME: (state, name) => {
       state.userInfo.name = name;
+    },
+    USER_ID: (state, id) => {
+      state.userInfo.id = id;
     },
     AUTH_STATUS: (state, status, error) => {
       state.userInfo.authStatus = status;
@@ -226,7 +233,7 @@ export default new Vuex.Store({
       if (!socketio) {
         socketio = new VueSocketIO({
           debug: true,
-          connection: SocketIO(axios.defaults.baseURL, {path:'/socket.io'}),
+          connection: SocketIO(axios.defaults.baseURL, {path:'/socket.io', query: "userId=" + state.userInfo.id}),
           vuex: {
             store,
             actionPrefix: 'socket_',
@@ -262,6 +269,7 @@ export default new Vuex.Store({
           commit('AUTH_STATUS', "Success")
           commit('USER_LOGGED_IN', true);
           commit('USER_NAME', res.data.login);
+          commit('USER_ID', res.data.id);
           commit('AMOUNT', res.data.days_amount);
           commit('TEST_FORM_ID', res.data.test_form_id);
           dispatch('SOCKET_LOGIN');
@@ -281,7 +289,7 @@ export default new Vuex.Store({
     AUTH_REGISTER: ({commit, state, dispatch}, props) => {
       return new Promise((resolve, reject) => {
         commit('AUTH_STATUS', "Loading");
-        axios.post("/api/register", props).then((res) => {
+        axios.post("/api/auth/login", props).then((res) => {
           commit('AUTH_STATUS', "Success")
           commit('USER_LOGGED_IN', true);
           commit('USER_NAME', res.data.name);
@@ -305,6 +313,7 @@ export default new Vuex.Store({
           commit('USER_LOGGED_IN', true);
           commit('USER_NAME', res.data.login);
           commit('AMOUNT', res.data.days_amount);
+          commit('USER_ID', res.data.id);
           commit('TEST_FORM_ID', res.data.test_form_id);
           dispatch('SOCKET_LOGIN');
           if (res.data.parent_sitepower_id) {
