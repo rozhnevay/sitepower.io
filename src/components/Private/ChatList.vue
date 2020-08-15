@@ -12,7 +12,7 @@
           <div class="chats overflow-auto" v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="10">
 
 
-            <div v-for="chat in chats" @click="openChat(chat)" v-bind:id="chat.sitepower_id" class="item" :class="[ chat.sitepower_id == activeChatId ?  'selected' : '' ]">
+            <div v-for="chat in chats" @click="openChat(chat)" v-bind:id="chat.dialogId" class="item" :class="[ chat.dialogId == activeChatId ?  'selected' : '' ]">
 
               <div class="left">
 
@@ -23,21 +23,21 @@
 
                 <div class="text">
                     <span class="title">
-                      {{chat.name}}
+                      {{chat.fullName}}
                     </span>
                   <div class="message">
-                      {{chat.last_msg_body}}
+                      {{chat.lastMessageBody}}
                   </div>
                 </div>
 
               </div>
               <div class="status">
                 <!--<span v-if="chat.sitepower_id === activeChatId" class="badge badge-light">NOW </span>-->
-                <span v-if="chat.cnt_unanswered > 0" class="badge badge-danger" style="width: max-content;">NEW <span  class="badge badge-light" style="padding:inherit">{{chat.cnt_unanswered}}</span></span>
+                <span v-if="chat.cntUnanswered > 0" class="badge badge-danger" style="width: max-content;">NEW <span  class="badge badge-light" style="padding:inherit">{{chat.cntUnanswered}}</span></span>
                 <!--<small class="text-muted">{{chat.lastMessage().created | moment("HH:mm")}}</small>-->
                 <!--<small class="text-muted">{{chat.last_msg_created | moment('calendar', null, { sameDay: 'HH:mm', lastDay : 'DD.MM.YYYY HH:mm', lastWeek: 'DD.MM.YYYY HH:mm', sameElse: 'DD.MM.YYYY HH:mm'})}}</small>-->
                 <div>
-                  <small class="text-muted">{{formatDate(chat.last_msg_created)}}</small>
+                  <small class="text-muted">{{formatDate(chat.lastMessageCreated)}}</small>
                 </div>
               </div>
 
@@ -65,8 +65,8 @@
       openChat(chat) {
         console.log("chat");
         console.log(chat);
-        console.log(chat.sitepower_id);
-        this.$store.commit('ACTIVE_CHAT_ID', chat.sitepower_id);
+        console.log(chat.dialogId);
+        this.$store.commit('ACTIVE_CHAT_ID', chat.dialogId);
         this.$root.$emit("chat_open");
         if (this.$isMobile()) {
           // this.$router.push({name: 'ChatBody'})

@@ -28,7 +28,7 @@ export default new Vuex.Store({
       id: ""
     },
     systemInfo: {
-      chats : {},
+      chats : [],
       chatsStatus : "",
       chatsError : "",
       forms: [],
@@ -212,16 +212,16 @@ export default new Vuex.Store({
         commit('CHATS_STATUS', "Loading");
         let params = {limit:20};
         if (state.systemInfo.lastId) params.beforeId = state.systemInfo.lastId;
-        axios.get("/api/chats", {params:params})
+        axios.get("/api/dialog", {params:params})
           .then(res => {
             commit('CHATS_STATUS', "Success");
-            commit('CHATS', res.data.chats);
+            commit('CHATS', res.data);
 
-            if (!state.systemInfo.activeChatId && res.data.chats && Object.keys(res.data.chats)[0]) {
-              commit('ACTIVE_CHAT_ID', Object.keys(res.data.chats)[0]);
+            if (!state.systemInfo.activeChatId && res.data && res.data[0].dialogId) {
+              commit('ACTIVE_CHAT_ID', res.data[0].dialogId);
             }
 
-            commit('LAST_ID', res.data.meta.lastId);
+            // commit('LAST_ID', res.data.meta.lastId);
             resolve();
           }).catch(err => {
           commit('CHATS_STATUS', "Error", err.message);
@@ -247,7 +247,7 @@ export default new Vuex.Store({
     MESSAGES_REQUEST: ({commit, state, dispatch}, props) => {
       return new Promise((resolve, reject) => {
         commit('MESSAGES_STATUS', "Loading");
-        axios.get("/api/chat/" + state.systemInfo.activeChatId)
+        axios.get("/api/dialog/" + state.systemInfo.activeChatId + "/message")
           .then(res => {
             commit('MESSAGES_STATUS', "Success");
             commit('MESSAGES', res.data);
@@ -506,25 +506,38 @@ export default new Vuex.Store({
         })
       });
     },
-    socket_receive: ({commit, state, dispatch}, receive_msg) => {
-      console.log("receive");
-      const msg = receive_msg.msg;
-      const chat = receive_msg.chat;
-      if (!msg || !chat) return;
-      console.log(receive_msg);console.log(msg);console.log(chat);
+    socket_receive_user: ({commit, state, dispatch}, receive_msg) => {
+      console.log("receive_user");
+      const msg = receive_msg;
+      console.log(msg)
+      if (!msg ) return;
+      console.log(receive_msg);console.log(msg);
 
       let chatItem, chatId;
-      chatId = msg.direction === "to_user" ? msg.sender_id : msg.recepient_id;
-      chatItem = state.systemInfo.chats[chatId];
+      console.log(1000)
+      chatId = msg.direction === "to_user" ? msg.senderId : msg.recepientId;
+      chatItem = state.systemInfo.chats.filter(item => item.dialogId === chatId)[0];
+      console.log(chatId)
+      console.log(state.systemInfo.chats)
+      console.log(2000)
       // 1. Такой чат - уже есть
       if (chatItem) {
         // 1. Если это активный чат - пушаем в него сообщение
+        console.log(3000)
         chatId === state.systemInfo.activeChatId ? state.systemInfo.messages.push(msg) : null;
         // 2. Обновляем состояние чата
-        Object.assign(state.systemInfo.chats[chatId], chat);
+        console.log(2)
+        Object.assign(state.systemInfo.chats.filter(item => item.dialogId === chatId)[0], chatItem);
+
+        console.log(state.systemInfo.messages)
+        console.log(chatId)
+        console.log(state.systemInfo.activeChatId)
+        console.log(state.systemInfo.chats.filter(item => item.dialogId === chatId)[0])
       } else {
-        state.systemInfo.chats = Object.assign({chatId : chat}, state.systemInfo.chats);
-        Vue.set(state.systemInfo.chats, chatId, chat);
+        console.log(4000)
+        // state.systemInfo.chats = Object.assign({chatId : chat}, state.systemInfo.chats);
+        // Vue.set(state.systemInfo.chats, chatId, chat);
+        dispatch('CHATS_REQUEST');
       }
 
       /* уведомление */

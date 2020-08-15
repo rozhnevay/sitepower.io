@@ -3,17 +3,17 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router/index.js'
-import store from './store';
+import store from './store'
 
-import 'bootstrap/dist/css/bootstrap.min.css';
-//import '@fortawesome/fontawesome-free/css/all.min.css';
+import 'bootstrap/dist/css/bootstrap.min.css'
+// import '@fortawesome/fontawesome-free/css/all.min.css';
 import './styles/style.css'
-import 'popper.js/dist/popper.min.js';
-import 'bootstrap/dist/js/bootstrap.min.js';
+import 'popper.js/dist/popper.min.js'
+import 'bootstrap/dist/js/bootstrap.min.js'
 import './js/custom.js'
-import VueMobileDetection from "vue-mobile-detection";
+import VueMobileDetection from 'vue-mobile-detection'
 
-Vue.use(VueMobileDetection);
+Vue.use(VueMobileDetection)
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
@@ -24,4 +24,3 @@ new Vue({
   components: { App },
   template: '<App/>'
 })
-

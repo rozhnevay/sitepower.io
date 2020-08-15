@@ -18,9 +18,9 @@
         </div>
         <div :class="[ msg.direction === 'from_user' ?  'admin' : 'client' ]">
 
-          <span v-if="msg.direction === 'to_user' && msg.link===''" class="msg">{{msg.body}}</span>
+          <span v-if="msg.direction === 'to_user' && (msg.link===null || msg.link==='')" class="msg">{{msg.body}}</span>
           <a v-if="msg.type==='link' && msg.direction === 'to_user'" class="msg" :href="msg.link" target="_blank"><span><i class="fas fa-file"></i> {{msg.body}}</span></a>
-          <div class="time">{{msg.created | moment("HH:mm:ss")}}</div>
+          <div class="time">{{msg.createdDate | moment("HH:mm:ss")}}</div>
           <!--<span class="time">{{msg.created |moment('calendar', null, { sameDay: 'HH:mm:ss',  lastWeek: 'DD.MM HH:mm:ss', sameElse: 'DD.MM HH:mm:ss'})}}</span>-->
 
           <span v-if="msg.direction === 'from_user' && msg.type==='text'" class="msg">{{msg.body}}</span>
@@ -262,14 +262,15 @@
          return this.$store.getters.getMessages;
       },
       getChatOpenDt () {
-        let chat = this.$store.getters.getChats[this.getId]
+        let chat = chat()
         if (chat && chat[0]) {
           return chat[0].lastOpenDt;
         }
         return null;
       },
       chat () {
-        return this.$store.getters.getChats[this.getId];
+        console.log(this.$store.getters.getChats)
+        return this.$store.getters.getChats.filter(item => item.dialogId === this.getId)[0];
       },
       getCustomEmo () {
         return customEmo;

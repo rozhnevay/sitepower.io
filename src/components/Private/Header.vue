@@ -41,73 +41,70 @@
 </template>
 
 <script>
-  import * as $ from 'jquery'
-  export default {
-    name: "private-header-component",
+import * as $ from 'jquery'
+export default {
+  name: 'private-header-component',
 
-    methods : {
-      logout () {
-        this.$store.dispatch('AUTH_LOGOUT')
-          .then(() => {
-            this.$socket.emit("exit");
-            this.$router.push({ name: 'Login' })
+  methods: {
+    logout () {
+      this.$store.dispatch('AUTH_LOGOUT')
+        .then(() => {
+          this.$socket.emit('exit')
+          this.$router.push({ name: 'Login' })
+        })
+        .catch(err => {
+          console.log(err.message)
+        })
+    },
+    onInfo () {
+      this.$store.commit('COMPONENT', 'chat-info-component')
+    },
+    onBack () {
+      if (this.currentChatComponent === 'chat-info-component') {
+        this.$store.commit('COMPONENT', 'chat-body-component')
+      } else {
+        this.$store.commit('COMPONENT', 'chat-list-component')
+        setTimeout(() => {
+          $('.main').scrollTop(0)
+          $('html,body').animate({
+            scrollTop: 0
+          }, 0, () => {
+            $('html,body').clearQueue()
           })
-          .catch(err => {
-            console.log(err.message);
-          });
-      },
-      onInfo() {
-        this.$store.commit("COMPONENT", 'chat-info-component');
-      },
-      onBack() {
-        if (this.currentChatComponent === 'chat-info-component') {
-          this.$store.commit("COMPONENT", 'chat-body-component');
-        } else {
-
-          this.$store.commit("COMPONENT", 'chat-list-component');
-          setTimeout(() => {
-            $('.main').scrollTop(0);
-            $('html,body').animate({
-              scrollTop: 0
-            }, 0, () => {
-              $('html,body').clearQueue();
-            });
-          }, 5)
-
-        }
-
-      },
-    },
-    computed: {
-      getUserName () {
-        return this.$store.getters.USER_NAME;
-      },
-      activeComponent() {
-        return this.$route.name;
-      },
-      admin() {
-        return this.$store.getters.ADMIN;
-      },
-      amount() {
-        return this.$store.getters.AMOUNT;
-      },
-      day() {
-        const d = this.amount;
-        const rem = d%10;
-        return rem === 1 ? 'день' : rem >= 2 && rem <= 4 ? 'дня' : 'дней';
-      },
-      left() {
-        const d = this.amount;
-        const rem = d%10;
-        return  rem === 1 ? 'остался' : 'осталось';
-      },
-      isMobile: function() {
-        return this.$isMobile();
-      },
-      currentChatComponent() {
-        return this.$store.getters.COMPONENT;
+        }, 5)
       }
+    }
+  },
+  computed: {
+    getUserName () {
+      return this.$store.getters.USER_NAME
     },
-
+    activeComponent () {
+      return this.$route.name
+    },
+    admin () {
+      return this.$store.getters.ADMIN
+    },
+    amount () {
+      return this.$store.getters.AMOUNT
+    },
+    day () {
+      const d = this.amount
+      const rem = d % 10
+      return rem === 1 ? 'день' : rem >= 2 && rem <= 4 ? 'дня' : 'дней'
+    },
+    left () {
+      const d = this.amount
+      const rem = d % 10
+      return rem === 1 ? 'остался' : 'осталось'
+    },
+    isMobile: function () {
+      return this.$isMobile()
+    },
+    currentChatComponent () {
+      return this.$store.getters.COMPONENT
+    }
   }
+
+}
 </script>
