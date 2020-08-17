@@ -56,7 +56,7 @@ export default {
   methods: {
     checkForm (e) {
       e.preventDefault();
-      this.$store.dispatch('AUTH_REGISTER', {name: this.name, email: this.email, password: this.password})
+      this.$store.dispatch('AUTH_REGISTER', {fullName: this.name, email: this.email, password: this.password})
         .then(() => this.$router.push({name: 'Chats'}))
         .catch(err => {
           this.signupError = (err.response && err.response.status == "400") ? "Не удалось зарегистрировать пользователя: указанный email уже существует" : "Ошибка сервера"

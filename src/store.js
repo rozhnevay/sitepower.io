@@ -290,7 +290,7 @@ export default new Vuex.Store({
     AUTH_REGISTER: ({commit, state, dispatch}, props) => {
       return new Promise((resolve, reject) => {
         commit('AUTH_STATUS', "Loading");
-        axios.post("/api/auth/login", props).then((res) => {
+        axios.post("/api/auth/signup", props).then((res) => {
           commit('AUTH_STATUS', "Success")
           commit('USER_LOGGED_IN', true);
           commit('USER_NAME', res.data.name);
@@ -462,7 +462,7 @@ export default new Vuex.Store({
     },
     FORM_CREATE: ({commit, state, dispatch}, origin) => {
       return new Promise((resolve, reject) => {
-        axios.post("/api/form/", {origin}).then((res) => {
+        axios.post("/api/widget/", {origin}).then((res) => {
           dispatch('FORMS');
           resolve();
         }).catch((err) => {
