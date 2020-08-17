@@ -37,35 +37,35 @@
     <div class="input">
 
       <div class="left">
-        <div class="pin-file" title="Прикрепить вложение" v-if="chat.type==='site'">
-          <input type="file" name="file[]" id="file" ref="file" v-on:change="handleFileUpload()" class="inputfile inputfile-5" hidden data-multiple-caption="{count} files selected" multiple />
-          <label for="file"><img src="../../assets/files.svg" alt=""></label>
-        </div>
-        <emoji-picker @emoji="append" :emojiTable="getCustomEmo">
-          <div
-            class="smiles fas fa-smile"
-            slot="emoji-invoker"
-            slot-scope="{ events: { click: clickEvent } }"
-            @click.stop="clickEvent"
-          >
-          </div>
-          <div slot="emoji-picker" slot-scope="{ emojis, insert, display }">
-            <div class="emoji-picker" :style="{ top: -18 + 'rem', left: 0 + 'rem' }">
-              <div>
-                <div v-for="(emojiGroup, category) in emojis" :key="category">
-                  <div class="emojis">
-                <span
-                  v-for="(emoji, emojiName) in emojiGroup"
-                  :key="emojiName"
-                  @click="insert(emoji)"
-                  :title="emojiName"
-                >{{ emoji }}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </emoji-picker>
+<!--        <div class="pin-file" title="Прикрепить вложение" v-if="chat.type==='site'">-->
+<!--          <input type="file" name="file[]" id="file" ref="file" v-on:change="handleFileUpload()" class="inputfile inputfile-5" hidden data-multiple-caption="{count} files selected" multiple />-->
+<!--          <label for="file"><img src="../../assets/files.svg" alt=""></label>-->
+<!--        </div>-->
+<!--        <emoji-picker @emoji="append" :emojiTable="getCustomEmo">-->
+<!--          <div-->
+<!--            class="smiles fas fa-smile"-->
+<!--            slot="emoji-invoker"-->
+<!--            slot-scope="{ events: { click: clickEvent } }"-->
+<!--            @click.stop="clickEvent"-->
+<!--          >-->
+<!--          </div>-->
+<!--          <div slot="emoji-picker" slot-scope="{ emojis, insert, display }">-->
+<!--            <div class="emoji-picker" :style="{ top: -18 + 'rem', left: 0 + 'rem' }">-->
+<!--              <div>-->
+<!--                <div v-for="(emojiGroup, category) in emojis" :key="category">-->
+<!--                  <div class="emojis">-->
+<!--                <span-->
+<!--                  v-for="(emoji, emojiName) in emojiGroup"-->
+<!--                  :key="emojiName"-->
+<!--                  @click="insert(emoji)"-->
+<!--                  :title="emojiName"-->
+<!--                >{{ emoji }}</span>-->
+<!--                  </div>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </emoji-picker>-->
         <div class="msg">
           <textarea maxlength="1000" placeholder="Введите сообщение..." v-model="msg" ></textarea>
         </div>
@@ -187,10 +187,10 @@
         let sendMessage = {};
 
         sendMessage.direction = "from_user";
-        sendMessage.recepient_id = this.$store.getters.getActiveChatId;
+        sendMessage.recepientId = this.$store.getters.getActiveChatId;
         sendMessage.body = this.msg;
         sendMessage.type = "text";
-        this.$socket.emit("send", sendMessage);
+        this.$socket.emit("send_user", sendMessage);
         this.msg = "";
         autosize($('.input .msg textarea'));
       },

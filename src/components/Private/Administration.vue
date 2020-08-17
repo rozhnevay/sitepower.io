@@ -263,7 +263,7 @@
         this.gradient = this.form.gradient;
         this.label = this.form.label;
         this.position = this.form.position;
-        this.message_placeholder = this.form.message_placeholder;
+        this.message_placeholder = this.form.messagePlaceholder;
         let scriptUrl = 'https://ws.sitepower.io/api/widget/' + this.form.sitepower_id;
         this.script = '<script type="text/javascript" src="' + scriptUrl + '"/>';
         this.enableApply = false;
@@ -289,7 +289,7 @@
         this.$root.$emit("newoperator_open");
       },
       saveForm() {
-        const form = {color:this.color, gradient:this.gradient, label:this.label, position:this.position, message_placeholder:this.message_placeholder};
+        const form = {color:this.color, gradient:this.gradient, label:this.label, position:this.position, messagePlaceholder:this.message_placeholder};
         this.$store.dispatch('FORM', form);
         this.enableApply = false;
       },

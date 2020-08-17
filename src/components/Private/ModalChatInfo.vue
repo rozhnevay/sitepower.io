@@ -16,7 +16,7 @@
               </div>
               <div class="form-group">
                 <label for="email">Email address</label>
-                <input type="email" class="form-control" id="email" placeholder="abc@example.com" v-model="login">
+                <input type="email" class="form-control" id="email" placeholder="abc@example.com" v-model="email">
               </div>
               <div class="form-group mb-0">
                 <label for="phone">Phone</label>
@@ -47,7 +47,7 @@
     methods: {
       checkForm (e) {
         e.preventDefault();
-        this.$store.dispatch("SET_ACTIVE_CHAT_CONTACT", {name:this.name, login:this.login, phone:this.phone});
+        this.$store.dispatch("SET_ACTIVE_CHAT_CONTACT", {name:this.name, email:this.email, phone:this.phone});
         jquery('#chatinfo').modal('hide');
         jquery('body').removeClass('modal-open');
         jquery('.modal-backdrop').remove();

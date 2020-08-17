@@ -154,16 +154,16 @@ export default new Vuex.Store({
     },
 
     ACTIVE_CHAT_CATEGORY: (state, cat) => {
-      state.systemInfo.chats[state.systemInfo.activeChatId].class = cat;
+      state.systemInfo.chats.filter(item => item.dialogId === state.systemInfo.activeChatId)[0].className = cat;
     },
     ACTIVE_CHAT_SPAM: (state) => {
-      delete state.systemInfo.chats[state.systemInfo.activeChatId];
+      delete state.systemInfo.chats.filter(item => item.dialogId === state.systemInfo.activeChatId)[0];
 
     },
     ACTIVE_CHAT_CONTACT: (state, item) => {
-      state.systemInfo.chats[state.systemInfo.activeChatId].name = item.name;
-      state.systemInfo.chats[state.systemInfo.activeChatId].login = item.login;
-      state.systemInfo.chats[state.systemInfo.activeChatId].phone = item.phone;
+      state.systemInfo.chats.filter(item => item.dialogId === state.systemInfo.activeChatId)[0].fullName = item.name;
+      state.systemInfo.chats.filter(item => item.dialogId === state.systemInfo.activeChatId)[0].email = item.email;
+      state.systemInfo.chats.filter(item => item.dialogId === state.systemInfo.activeChatId)[0].phone = item.phone;
     },
     setActiveChatPrintingTm: (state, val) => {
       state.systemInfo.activeChatPrintingTm = val;
@@ -233,6 +233,7 @@ export default new Vuex.Store({
       if (!socketio) {
         socketio = new VueSocketIO({
           debug: true,
+          encoding: 'UTF-8',
           connection: SocketIO(axios.defaults.baseURL, {path:'/socket.io', query: "userId=" + state.userInfo.id}),
           vuex: {
             store,
@@ -369,7 +370,7 @@ export default new Vuex.Store({
     },
     SET_ACTIVE_CHAT_CATEGORY: ({commit, state, dispatch}, category) => {
       return new Promise((resolve, reject) => {
-        axios.post("/api/chat/" + state.systemInfo.activeChatId, {class:category}).then((res) => {
+        axios.post("/api/dialog/" + state.systemInfo.activeChatId + "/category", {className:category}).then((res) => {
           commit('ACTIVE_CHAT_CATEGORY', category)
           resolve();
         }).catch((err) => {
@@ -379,10 +380,11 @@ export default new Vuex.Store({
     },
     SET_ACTIVE_CHAT_SPAM: ({commit, state, dispatch}, val) => {
       return new Promise((resolve, reject) => {
-        axios.post("/api/chat/" + state.systemInfo.activeChatId, {class:val}).then((res) => {
+        axios.post("/api/dialog/" + state.systemInfo.activeChatId + "/category", {className:val}).then((res) => {
           commit('ACTIVE_CHAT_SPAM')
-          if (state.systemInfo.chats && Object.keys(state.systemInfo.chats)[0]) {
-            commit('ACTIVE_CHAT_ID', Object.keys(state.systemInfo.chats)[0]);
+          console.log(state.systemInfo.chats)
+          if (state.systemInfo.chats && state.systemInfo.chats.length > 0) {
+            commit('ACTIVE_CHAT_ID', state.systemInfo.chats[0]);
             dispatch('MESSAGES_REQUEST');
           }
           resolve();
@@ -393,7 +395,7 @@ export default new Vuex.Store({
     },
     ACTIVE_CHAT_SEND: ({commit, state, dispatch}) => {
       return new Promise((resolve, reject) => {
-        axios.get("/api/chat/" + state.systemInfo.activeChatId + "/send").then((res) => {
+        axios.post("/api/dialog/" + state.systemInfo.activeChatId + "/send").then((res) => {
           resolve();
         }).catch((err) => {
           reject(err);
@@ -402,7 +404,7 @@ export default new Vuex.Store({
     },
     SET_ACTIVE_CHAT_CONTACT: ({commit, state, dispatch}, item) => {
       return new Promise((resolve, reject) => {
-        axios.post("/api/chat/" + state.systemInfo.activeChatId + "/contact", {name:item.name, login:item.login, phone:item.phone}).then((res) => {
+        axios.post("/api/dialog/" + state.systemInfo.activeChatId + "/contact", {name:item.name, email:item.email, phone:item.phone}).then((res) => {
           commit('ACTIVE_CHAT_CONTACT', item)
           resolve();
         }).catch((err) => {
@@ -422,13 +424,14 @@ export default new Vuex.Store({
     },
     FORMS: ({commit, state, dispatch}, item) => {
       return new Promise((resolve, reject) => {
-        axios.get("/api/forms").then((res) => {
+        axios.get("/api/widget").then((res) => {
           let forms = res.data;
           forms.sort((a,b)=> {
-            if (a.created < b.created) return 1
-            else if (a.created > b.created) return -1
+            if (a.createdDate < b.createdDate) return 1
+            else if (a.createdDate > b.createdDate) return -1
             else return 0
           });
+          console.log(forms);
           commit('FORMS', forms);
           resolve();
         }).catch((err) => {
@@ -436,20 +439,20 @@ export default new Vuex.Store({
         })
       });
     },
-    OPERATORS: ({commit, state, dispatch}, item) => {
-      return new Promise((resolve, reject) => {
-        axios.get("/api/operators").then((res) => {
-          let operators = res.data;
-          commit('OPERATORS', operators);
-          resolve();
-        }).catch((err) => {
-          reject(err);
-        })
-      });
-    },
+    // OPERATORS: ({commit, state, dispatch}, item) => {
+    //   return new Promise((resolve, reject) => {
+    //     axios.get("/api/operators").then((res) => {
+    //       let operators = res.data;
+    //       commit('OPERATORS', operators);
+    //       resolve();
+    //     }).catch((err) => {
+    //       reject(err);
+    //     })
+    //   });
+    // },
     FORM: ({commit, state, dispatch}, form) => {
       return new Promise((resolve, reject) => {
-        axios.post("/api/form/" + state.systemInfo.activeFormId, {color:form.color, gradient:form.gradient, label:form.label, position:form.position, message_placeholder:form.message_placeholder}).then((res) => {
+        axios.post("/api/widget/" + state.systemInfo.activeFormId, {color:form.color, gradient:form.gradient, label:form.label, position:form.position, messagePlaceholder:form.messagePlaceholder}).then((res) => {
           dispatch('FORMS');
           resolve();
         }).catch((err) => {
@@ -517,6 +520,8 @@ export default new Vuex.Store({
       console.log(1000)
       chatId = msg.direction === "to_user" ? msg.senderId : msg.recepientId;
       chatItem = state.systemInfo.chats.filter(item => item.dialogId === chatId)[0];
+      chatItem.lastMessageBody = msg.body;
+      chatItem.lastMessageCreated = msg.createdDate;
       console.log(chatId)
       console.log(state.systemInfo.chats)
       console.log(2000)
@@ -541,18 +546,18 @@ export default new Vuex.Store({
       }
 
       /* уведомление */
-      if (msg.direction === "to_user") {
-        if (Notification.permission === "granted") {
-          let notification = new Notification(chat.name, {body: msg.body, icon:"https://app.sitepower.io/static/icon-square_144.png"});
-          notification.onclick = () => {
-            try {
-              window.focus();
-              this.cancel();
-            }
-            catch (ex) {}
-          };
-        }
-      }
+      // if (msg.direction === "to_user") {
+      //   if (Notification.permission === "granted") {
+      //     let notification = new Notification(chat.fullName, {body: msg.body, icon:"https://app.sitepower.io/static/icon-square_144.png"});
+      //     notification.onclick = () => {
+      //       try {
+      //         window.focus();
+      //         this.cancel();
+      //       }
+      //       catch (ex) {}
+      //     };
+      //   }
+      // }
     },
   }
 });

@@ -18,7 +18,7 @@
 
                 <div class="img">
                   <img src="../../assets/logo-lightning.svg" height="25px" alt="">
-                  <span v-if="chat.class" v-bind:id="chat.class" :class="getChatClass(chat)"></span>
+                  <span v-if="chat.className" v-bind:id="chat.className" :class="getChatClass(chat)"></span>
                 </div>
 
                 <div class="text">
@@ -74,7 +74,7 @@
         }
       },
       getChatClass(chat) {
-        return "color " + chat.class;
+        return "color " + chat.className;
       },
       loadMore() {
         this.busy = true;
