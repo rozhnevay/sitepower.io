@@ -11,10 +11,14 @@
           <div class="md-main">
             <form @submit="checkForm" action="#" method="POST">
               <div class="form-group">
-                <label for="name">Email оператора</label>
-                <input type="email" class="form-control" id="name" required placeholder="ivan@gmail.com" v-model="login">
+                <label for="email">Email оператора</label>
+                <input type="email" class="form-control" id="email" required placeholder="ivan@gmail.com" v-model="login">
+                <label for="name">Имя оператора</label>
+                <input type="text" class="form-control" id="name" required placeholder="Ivan" v-model="name">
+                <label for="password">Пароль оператора</label>
+                <input type="password" class="form-control" id="password" required placeholder="Password" v-model="password">
               </div>
-              <button class="btn btn-black mt-20 w-100">Отправить приглашение</button>
+              <button class="btn btn-black mt-20 w-100">Добавить</button>
             </form>
 
           </div>
@@ -32,22 +36,24 @@
     name: 'ModalNewOperator',
     data () {
       return {
-        login: ''
+        login: '',
+        name: '',
+        password: ''
       };
     },
     methods: {
       checkForm (e) {
         e.preventDefault();
-        axios.post("/api/operator", {login:this.login}).then(() => {
-          axios.get("/api/operators").then((res) => {
+        axios.post("/api/employee", {login:this.login, name:this.name, password:this.password}).then(() => {
+          axios.get("/api/employee").then((res) => {
             let operators = res.data;
 
             operators.sort((a,b)=> {
-              if (a.created < b.created) return 1
-              else if (a.created > b.created) return -1
+              if (a.createdDate < b.createdDate) return 1
+              else if (a.createdDate > b.createdDate) return -1
               else return 0
             });
-            this.$store.commit('initOperators', operators);
+            this.$store.commit('OPERATORS', operators);
           }).catch((err) => {
             console.log("Error in getting operators: ", err.message)
           })

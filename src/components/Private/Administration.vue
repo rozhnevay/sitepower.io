@@ -116,8 +116,8 @@
 
      <div class="bar ws">
        <span class="title">Ваши операторы</span>
-       <button type="button" class="btn btn-light btn-sm ml-3" @click="showNewOperatorModal" data-target="#newoperator" data-toggle="modal" >Пригласить оператора</button>
-       <button type="button" class="btn btn-light btn-sm ml-3" @click="blockOperator" :disabled="activeOperator && activeOperator.admin === 'Y'">{{activeOperator && activeOperator.status === 'Заблокирован' ? 'Разблокировать' : 'Заблокировать'}}</button>
+       <button type="button" class="btn btn-light btn-sm ml-3" @click="showNewOperatorModal" data-target="#newoperator" data-toggle="modal" >Добавить оператора</button>
+<!--       <button type="button" class="btn btn-light btn-sm ml-3" @click="blockOperator" :disabled="activeOperator && activeOperator.admin === 'Y'">{{activeOperator && activeOperator.status === 'Заблокирован' ? 'Разблокировать' : 'Заблокировать'}}</button>-->
      </div>
 
      <div class="tableFixHead table-block ws">
@@ -134,12 +134,12 @@
          </tr>
          </thead>
          <tbody>
-         <tr v-for="operator in operators" @click="openOperator(operator)" class="operator-row" :class="[ operator.sitepower_id == activeOperatorId ?  'selected' : '' ]">
+         <tr v-for="operator in operators" @click="openOperator(operator)" class="operator-row" :class="[ operator.id == activeOperatorId ?  'selected' : '' ]">
            <th scope="row">{{operator.name}}</th>
            <td>{{operator.login}}</td>
-           <td><span class="badge" :class="[operator.status === 'Заблокирован' ? 'badge-danger' : 'badge-warning']">{{operator.status}}</span></td>
+           <td><span class="badge" :class="[operator.status === 'Заблокирован' ? 'badge-danger' : 'badge-warning']">Активный</span></td>
            <td>{{operator.admin === "Y" ? "Администратор" : "Оператор"}}</td>
-           <td>{{operator.created | moment("DD.MM.YYYY HH:mm")}}</td>
+           <td>{{operator.createdDate | moment("DD.MM.YYYY HH:mm")}}</td>
            <!--<td>-</td>-->
            <!--<td>0</td>-->
          </tr>
@@ -264,7 +264,7 @@
         this.label = this.form.label;
         this.position = this.form.position;
         this.message_placeholder = this.form.messagePlaceholder;
-        let scriptUrl = 'https://ws.sitepower.io/api/widget/' + this.form.sitepower_id;
+        let scriptUrl = 'https://ws.sitepower.io/api/widget/' + this.form.id;
         this.script = '<script type="text/javascript" src="' + scriptUrl + '"/>';
         this.enableApply = false;
        // let $script = jquery("<script type='text/javascript' id='widgetdemo' src='" + scriptUrl + "'/>");
@@ -279,7 +279,7 @@
         this.refreshModel();
       },
       openOperator (operator) {
-        this.$store.commit('ACTIVE_OPERATOR_ID', operator.sitepower_id);
+        this.$store.commit('ACTIVE_OPERATOR_ID', operator.id);
 
       },
       showNewSiteModal() {
@@ -333,7 +333,7 @@
         return this.$store.getters.ACTIVE_OPERATOR_ID;
       },
       activeOperator() {
-        return this.operators.filter(item => item.sitepower_id === this.activeOperatorId)[0];
+        return this.operators.filter(item => item.id === this.activeOperatorId)[0];
       },
       form () {
         let form = this.$store.getters.FORMS.filter(item => item.id === this.activeFormId);

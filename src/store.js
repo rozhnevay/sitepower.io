@@ -439,17 +439,17 @@ export default new Vuex.Store({
         })
       });
     },
-    // OPERATORS: ({commit, state, dispatch}, item) => {
-    //   return new Promise((resolve, reject) => {
-    //     axios.get("/api/operators").then((res) => {
-    //       let operators = res.data;
-    //       commit('OPERATORS', operators);
-    //       resolve();
-    //     }).catch((err) => {
-    //       reject(err);
-    //     })
-    //   });
-    // },
+    OPERATORS: ({commit, state, dispatch}, item) => {
+      return new Promise((resolve, reject) => {
+        axios.get("/api/employee").then((res) => {
+          let operators = res.data;
+          commit('OPERATORS', operators);
+          resolve();
+        }).catch((err) => {
+          reject(err);
+        })
+      });
+    },
     FORM: ({commit, state, dispatch}, form) => {
       return new Promise((resolve, reject) => {
         axios.post("/api/widget/" + state.systemInfo.activeFormId, {color:form.color, gradient:form.gradient, label:form.label, position:form.position, messagePlaceholder:form.messagePlaceholder}).then((res) => {
