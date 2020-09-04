@@ -22,7 +22,7 @@
     "vue-emoji-picker": "^1.0.1",
     "vue-infinite-scroll": "^2.0.2",
     "vue-mobile-detection": "^1.0.0",
-    "vue-moment": "^4.0.0",
+    "vue-moment": "^4.1.0",
     "vue-native-notification": "^1.0.5",
     "vue-router": "^3.0.1",
     "vue-socket.io": "^3.0.10",
